@@ -51,6 +51,19 @@ Prioritize messages from known contacts listed in CLAUDE.md Working Memory. Flag
 ### Fireflies — Recent Meeting Action Items
 Use `fireflies_get_transcripts` for the past 2 days. Extract action items assigned to the user from meeting summaries. These represent commitments that need follow-through.
 
+### Commitment Cross-Reference (Fireflies vs Asana)
+
+After gathering both Fireflies action items and Asana tasks, compare them:
+
+1. For each Fireflies action item, check if a matching Asana task already exists (match by keyword/topic — exact title match is not required)
+2. Separate into two lists:
+   - **Tracked**: Action items that have a corresponding Asana task (include in priority ranking as-is)
+   - **Uncaptured**: Action items with no matching Asana task (these are commitments at risk of being dropped)
+
+If uncaptured commitments are found, they will be surfaced in a dedicated section of the daily plan output (see Step 4) and offered for quick task creation in Step 5.
+
+**If Fireflies MCP is not available:** Skip this cross-reference and continue.
+
 ### HubSpot — My Deals & Tasks Only
 Use HubSpot MCP tools filtered to the user's HubSpot owner ID (from CLAUDE.md). Do NOT show deals or tasks owned by other team members.
 
@@ -130,6 +143,9 @@ PRIORITY ACTIONS (ranked)
 EMAILS NEEDING RESPONSE
 - [Sender]: [Subject snippet] — [urgency: now/today/this week]
 
+UNCAPTURED COMMITMENTS (from meetings — no Asana task found)
+- [Action item] — [Meeting name, date] — Want me to create a task?
+
 AGENT QUEUE (automatable)
 - [Tasks that can be run via /run-tasks]
 
@@ -143,12 +159,18 @@ Keep the total list to **no more than 10 priority actions**. If there are more, 
 
 After presenting the plan:
 
-1. If Agent Queue tasks exist, prompt:
+1. If uncaptured commitments were found, prompt:
+
+   "Found [N] meeting commitments without Asana tasks. Want me to create tasks for these? (all / select numbers / skip)"
+
+   If approved: Create tasks using the same pattern as `/log-task` — smart project routing from `asana-config.md`, set Task Progress to "Not Started", Type and Priority based on context. Set due dates based on urgency (commitments from today/yesterday = due today, older = due tomorrow).
+
+2. If Agent Queue tasks exist, prompt:
 
    "You have [N] tasks in Agent Queue. Want me to run /run-tasks as a background agent while you work on your priority items?"
 
    If yes: Launch /run-tasks via the Agent tool with run_in_background=true, then continue the interactive session with the user on their priority actions.
 
-2. Ask: "Which task would you like to start with?"
+3. Ask: "Which task would you like to start with?"
 
 This allows Claude to help work through tasks conversationally — whether that's drafting an email, researching a topic, or executing an Asana task.
