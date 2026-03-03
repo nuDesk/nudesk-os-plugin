@@ -1,7 +1,7 @@
 {
   "name": "executive-os",
   "description": "Executive operating system for Claude Code. Daily planning, strategic reviews, task execution, weekly reporting, and session management powered by Asana, Google Workspace, Fireflies, and HubSpot.",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": {
     "name": "nuDesk LLC",
     "email": "kenny@nudesk.ai"

@@ -11,6 +11,8 @@ An executive operating system for Claude Code. Turns Claude into a daily operato
 | `/executive-os:weekly-report` | Weekly | Generates a weekly executive progress report from all data sources and posts it to Asana |
 | `/executive-os:run-tasks` | As needed | Executes today's Asana "Agent Queue" tasks sequentially with skill matching and user sign-off |
 | `/executive-os:log-task` | As needed | Quick-capture an Asana task with smart project routing from a one-line description |
+| `/executive-os:add-scheduled-task` | As needed | Add a new scheduled Asana task template — discovers templates, updates config, creates Cloud Scheduler job |
+| `/executive-os:manage-schedules` | As needed | List, edit, pause/resume, or delete Cloud Scheduler jobs for Asana task automation |
 | `/executive-os:session-closeout` | End of session | End-of-session wrap-up — captures tasks, updates memory, logs learnings |
 
 ## Skills
