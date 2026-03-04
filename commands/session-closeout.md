@@ -32,14 +32,25 @@ Review the current conversation to identify:
 
 ## Step 2: Suggest Asana Tasks
 
-Present a numbered list of suggested Asana tasks:
+### Granularity Rule — Think Big, Not Small
+
+Suggest tasks at the **initiative or workstream level**, NOT the subtask level. If the session involved 5 small steps toward one goal, that's ONE task — not five.
+
+**DO:** "Finalize BDR Platform MVP for Gil" (with subtasks listed in the description)
+**DON'T:** "Update sidebar CSS", "Fix API endpoint", "Add export button", "Write tests", "Deploy to staging"
+
+Roll up related work into a single parent task. Include the specific subtasks or steps completed as bullet points in the task **description**, not as separate Asana tasks. A typical session should produce 1-3 tasks, rarely more.
+
+### Format
 
 ```
 SUGGESTED TASKS FROM THIS SESSION:
 
-1. [Task name] -> [Suggested project] — Due: [date]
-2. [Task name] -> [Suggested project] — Due: [date]
-3. [Task name] -> [Suggested project] — Due: [date]
+1. [High-level task name] -> [Suggested project] — Due: [date]
+   Subtasks completed: [brief bullets of what was done]
+
+2. [High-level task name] -> [Suggested project] — Due: [date]
+   Subtasks completed: [brief bullets of what was done]
 
 Create all / select specific numbers / skip?
 ```
@@ -48,7 +59,7 @@ Apply smart routing logic from `~/.claude/memory/asana-config.md`. The config fi
 
 Only suggest tasks that are genuinely material — skip trivial or already-tracked items.
 
-Wait for user confirmation. Create only approved tasks using Asana MCP tools.
+Wait for user confirmation. Create only approved tasks using Asana MCP tools. When creating, include the subtask bullets in the Asana task description (in `html_notes` format).
 
 **Config:** Load Asana GIDs from `~/.claude/memory/asana-config.md` for workspace, user, project, and custom field GIDs.
 
