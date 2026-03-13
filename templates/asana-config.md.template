@@ -73,6 +73,21 @@ If no routing match is found, ask the user which project to use. Present the mos
 - Custom fields are set via JSON string: `{"field_gid": "enum_option_gid"}`
 - Always set Task Progress, Type, and Priority when creating tasks
 
+## Scheduled Task Automation
+
+These paths are used by `/add-scheduled-task` and `/manage-schedules` commands.
+
+| Field | Value |
+|-------|-------|
+| **Templates config** | `[path-to-service-repo]/config/templates.yaml` |
+| **Service repo** | `[path-to-service-repo]/` |
+
+Example:
+```
+| **Templates config** | `~/Projects/asana-task-automation/config/templates.yaml` |
+| **Service repo** | `~/Projects/asana-task-automation/` |
+```
+
 ## How to Find Your GIDs
 
 You can find GIDs by:

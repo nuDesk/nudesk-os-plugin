@@ -15,14 +15,22 @@ This command is a **strict state machine**. You execute ONE step per turn.
 3. **NEVER read ahead.** Do not reference, summarize, or execute any step beyond the current one.
 4. **Wait for the user's answer** before moving to the next step. The user's response to `AskUserQuestion` is your signal to advance.
 
-## Config — Hardcoded Values (use these exactly, never discover or override)
+## Config
+
+### Infrastructure (stable — use these exactly, never discover or override)
 
 - **GCP project:** `nudesk-agent-builder`
 - **Region:** `us-west1`
 - **Service URL:** `https://asana-task-automation-1039881044029.us-west1.run.app`
 - **Service account:** `cloud-scheduler-invoker@nudesk-agent-builder.iam.gserviceaccount.com`
-- **Templates config:** `~/Documents/claude-code/nudesk-internal/asana-task-automation/config/templates.yaml`
-- **Service repo:** `~/Documents/claude-code/nudesk-internal/asana-task-automation/`
+
+### Local Paths (from user config)
+
+Read the **Scheduled Task Automation** section of `~/.claude/memory/asana-config.md` to get:
+- **Templates config** — path to `config/templates.yaml`
+- **Service repo** — path to the service repo root
+
+If the Scheduled Task Automation section is missing from asana-config.md, ask the user for the paths and suggest they update their config.
 
 ---
 
@@ -47,7 +55,7 @@ If `$ARGUMENTS` contains a hint, pre-select the most likely project.
 Run this command to list templates in the project the user chose:
 
 ```bash
-cd ~/Documents/claude-code/nudesk-internal/asana-task-automation && python3 -m app.services.asana_service list-templates <project_gid>
+cd <service-repo> && python3 -m app.services.asana_service list-templates <project_gid>
 ```
 
 Then present the discovered templates to the user via `AskUserQuestion` — ask which template to schedule. If no templates found, tell the user to create one in Asana first.
@@ -85,7 +93,7 @@ Call `AskUserQuestion` showing the generated template ID and cron expression. As
 
 ## Step 5: Update Config
 
-Read then edit `~/Documents/claude-code/nudesk-internal/asana-task-automation/config/templates.yaml`.
+Read then edit `<service-repo>/config/templates.yaml`.
 
 Add the new entry:
 ```yaml
@@ -128,7 +136,7 @@ Then proceed directly to Step 7.
 
 Commit the templates.yaml change:
 ```bash
-cd ~/Documents/claude-code/nudesk-internal/asana-task-automation && git add config/templates.yaml && git commit -m "feat: add scheduled template <template-id>"
+cd <service-repo> && git add config/templates.yaml && git commit -m "feat: add scheduled template <template-id>"
 ```
 
 Output a summary:

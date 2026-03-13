@@ -8,11 +8,20 @@ Manage the Cloud Scheduler jobs that trigger the Asana Task Automation service. 
 
 ## Config
 
+### Infrastructure (stable — use these exactly)
+
 - **GCP project:** `nudesk-agent-builder`
 - **Region:** `us-west1`
 - **Service URL:** `https://asana-task-automation-1039881044029.us-west1.run.app`
 - **Service account:** `cloud-scheduler-invoker@nudesk-agent-builder.iam.gserviceaccount.com`
-- **Templates config:** `~/Documents/claude-code/nudesk-internal/asana-task-automation/config/templates.yaml`
+
+### Local Paths (from user config)
+
+Read the **Scheduled Task Automation** section of `~/.claude/memory/asana-config.md` to get:
+- **Templates config** — path to `config/templates.yaml`
+- **Service repo** — path to the service repo root
+
+If the Scheduled Task Automation section is missing from asana-config.md, ask the user for the paths.
 
 ## Step 1: Determine Mode
 
@@ -134,7 +143,7 @@ gcloud scheduler jobs delete <job-name> --location us-west1 --quiet
 ### Step 4: Optionally clean up config
 
 Ask if the user also wants to remove the template entry from `templates.yaml`. If yes:
-- Read `~/Documents/claude-code/nudesk-internal/asana-task-automation/config/templates.yaml`
+- Read `<templates-config-path>`
 - Remove the matching template entry
 - Commit the change
 
