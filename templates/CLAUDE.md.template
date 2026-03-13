@@ -15,6 +15,21 @@
 - Google Workspace (Gmail, Drive, Sheets, Docs)
 - HubSpot CRM (if applicable)
 
+## Platform Reference Docs
+
+Before writing code for any managed platform, check these constraint docs:
+
+| Platform | Reference | Key Constraints |
+|----------|-----------|-----------------|
+| n8n Cloud | `~/Projects/system_docs/platform_references/n8n-cloud.md` | 60s Code node timeout, no fetch(), use this.helpers.httpRequest() |
+| GCP Cloud Run | `~/Projects/system_docs/platform_references/gcp-cloud-run.md` | 900s timeout, 2Gi memory, Secret Manager for credentials |
+| Google APIs | `~/Projects/system_docs/platform_references/google-apis.md` | Use batchGet not sequential, supportsAllDrives=True for Shared Drives |
+| HubSpot API | `~/Projects/system_docs/platform_references/hubspot-api.md` | 100 req/10s rate limit, dedup on email only, pipeline/field IDs |
+| HubSpot Conventions | `~/Projects/system_docs/platform_references/hubspot-conventions.md` | Em-dash naming prefix, static list IDs, deal source enums |
+| Apollo API | `~/Projects/system_docs/platform_references/apollo-api.md` | User-Agent + Cache-Control headers REQUIRED on PUT/POST |
+
+> If no reference doc exists for a platform you're working with, research constraints FIRST and create the doc.
+
 ## Company Context
 - [Company Name] — [one-line description]
 - [Key clients or accounts]

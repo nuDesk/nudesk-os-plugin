@@ -13,6 +13,10 @@ Execute the Asana agent queue. This command delegates to the `asana-agent` skill
    - Present the queue for review
    - Process each task sequentially with clarification, skill matching, execution, and closeout
 
+> **Platform constraint check:** Before writing or modifying code for a managed platform
+> (n8n, Cloud Run, Google APIs, HubSpot, Apollo), check the relevant reference doc at
+> `~/Projects/system_docs/platform_references/`. See CLAUDE.md for the full table.
+
 2. **After each task completes**, check if any new Asana tasks should be created as follow-ups. If so, suggest them (see session closeout behavior below).
 
 3. **After all tasks are processed**, run session closeout:
