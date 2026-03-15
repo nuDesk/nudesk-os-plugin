@@ -1,6 +1,6 @@
 ---
 description: End-of-session wrap-up — capture tasks, update memory, note learnings
-allowed-tools: Read, Write, Edit, Grep, Glob
+allowed-tools: Read, Write, Edit, Grep, Glob, mcp__plugin_asana_asana__asana_search_tasks, mcp__plugin_asana_asana__asana_create_task, mcp__plugin_asana_asana__asana_update_task, mcp__plugin_asana_asana__asana_create_task_story
 ---
 
 Run end-of-session closeout. This captures open items as Asana tasks, updates memory with new context, and logs Claude Code learnings.
@@ -30,32 +30,42 @@ Review the current conversation to identify:
 - Warnings or gotchas encountered
 - Useful patterns worth remembering
 
-## Step 2: Suggest Asana Tasks
+## Step 2: Search Asana, Then Suggest
 
-### Granularity Rule — Think Big, Not Small
+### Step 2a: Search for Existing Tasks First
 
-Suggest tasks at the **initiative or workstream level**, NOT the subtask level. If the session involved 5 small steps toward one goal, that's ONE task — not five.
+Before suggesting anything new, search Asana for tasks related to the session's work. Use `asana_search_tasks` with relevant keywords (project names, initiative names, people involved).
 
-**DO:** "Finalize BDR Platform MVP for Gil" (with subtasks listed in the description)
-**DON'T:** "Update sidebar CSS", "Fix API endpoint", "Add export button", "Write tests", "Deploy to staging"
+**Prefer updating existing tasks over creating new ones.** Most sessions advance an existing initiative, not start a new one. If a related task exists, suggest adding a comment (via `asana_create_task_story`) summarizing what was accomplished, rather than creating a duplicate.
 
-Roll up related work into a single parent task. Include the specific subtasks or steps completed as bullet points in the task **description**, not as separate Asana tasks. A typical session should produce 1-3 tasks, rarely more.
+### Step 2b: Granularity Rule — One Task Per Session
+
+A typical session produces **1 task at most**. Multiple tasks only make sense for daily-plan sessions that complete several queued items.
+
+Suggest at the **initiative or workstream level**, NOT the subtask level. If the session involved 5 small steps toward one goal, that's ONE task (or one update to an existing task).
+
+**DO:** "Update existing task with progress comment" or "Finalize BDR Platform MVP for Gil"
+**DON'T:** "Update sidebar CSS", "Fix API endpoint", "Add export button", "Write tests"
 
 ### Format
 
 ```
-SUGGESTED TASKS FROM THIS SESSION:
+ASANA SEARCH RESULTS:
+- [Existing task name] (GID: xxx) — [status] — Matches because: [reason]
 
-1. [High-level task name] -> [Suggested project] — Due: [date]
-   Subtasks completed: [brief bullets of what was done]
+RECOMMENDED ACTION:
+1. Update "[Existing task name]" with comment summarizing session progress
+   Comment: [brief summary of what was done]
 
-2. [High-level task name] -> [Suggested project] — Due: [date]
-   Subtasks completed: [brief bullets of what was done]
+— OR (if no related task found) —
 
-Create all / select specific numbers / skip?
+1. Create: [High-level task name] -> [Suggested project] — Due: [date]
+   Description: [brief bullets of what was done]
+
+Proceed / modify / skip?
 ```
 
-Apply smart routing logic from `~/.claude/memory/asana-config.md`. The config file contains a routing table that maps context clues (keywords, people, clients) to Asana project GIDs. Use project GIDs directly — no typeahead searches needed.
+Apply smart routing logic from `~/.claude/memory/asana-config.md` (only for new tasks). The config file contains a routing table that maps context clues to Asana project GIDs. Use project GIDs directly — no typeahead searches needed.
 
 Only suggest tasks that are genuinely material — skip trivial or already-tracked items.
 
