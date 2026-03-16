@@ -4,7 +4,7 @@ description: >
   Reference document: SOC 2 Type II compliance controls for Claude Code workflows.
   Embedded in security-check, session-closeout, and deploy commands. Auto-triggered
   when working with credentials, PII, or production systems.
-version: 1.0.0
+version: 1.1.0
 ---
 
 # SOC 2 Compliance Controls
@@ -46,7 +46,7 @@ version: 1.0.0
 
 ## Incident Response
 
-- **Credential exposure protocol:** See `~/Projects/system_docs/config/SECURITY_REVIEW_GUIDE.md` for the full incident response procedure.
+- **Credential exposure protocol:** See `references/security/security-review-guide.md` (bundled with this plugin) for the full incident response procedure.
 - **Severity levels:**
   - CRITICAL: Exposed in public repo, cloud logs, or public system — rotate within 24h
   - HIGH: Exposed in session logs with external access — rotate within 1 week
@@ -76,6 +76,57 @@ version: 1.0.0
 - [ ] Work is tracked in Asana (tasks created or updated)
 - [ ] Any new security findings are documented
 - [ ] CLAUDE.md or project docs updated if new compliance patterns discovered
+
+## Test Compliance Matrix
+
+Every code change type requires a minimum level of test coverage before merge. Use `/pr-review-toolkit:review-pr tests` to automate gap detection via the `pr-test-analyzer` agent.
+
+| Change Type | Required Tests | Gate | Enforcement |
+|-------------|---------------|------|-------------|
+| API endpoint (new/modified) | Unit test + integration test | Pre-commit | `pr-test-analyzer` (severity ≥ 7) |
+| Auth/permissions change | Security test + integration test | Pre-deploy | `security-reviewer` agent + `pr-test-analyzer` |
+| Database schema change | Migration test + rollback verification | Pre-deploy | Manual dry-run against staging DB |
+| Frontend component | Component test (behavioral, not snapshot) | Pre-commit | `pr-test-analyzer` |
+| Credential handling | Security review | Pre-deploy | `security-reviewer` agent |
+| n8n workflow | End-to-end test with synthetic payload | Pre-publish | Manual — run with test webhook |
+| Infrastructure/DevOps | Dry-run deploy + smoke test | Pre-deploy | Local build + health check |
+
+**When no tests exist yet:** If a project has zero test infrastructure, the first PR that touches logic must include test setup (framework, config, at least one test). Do not defer indefinitely.
+
+## Test Data Handling
+
+- **Synthetic data for all test fixtures.** Generate data that matches production structure (field names, types, relationships, realistic lengths) without containing real PII. Use libraries like `faker` (Python) or `@faker-js/faker` (JS) for consistency.
+- **No real GIDs, IDs, or tokens in committed fixtures.** Use placeholder patterns: `"gid_test_001"`, `"fake-api-key-for-testing"`. Real IDs belong in `.env` or Asana config — never in test files.
+- **No real email addresses or phone numbers.** Use `@example.com` domains (RFC 2606) and `555-0100` through `555-0199` (ARIN reserved range).
+- **Test fixture files must be gitignored if they contain environment-specific data.** Committed fixtures must be fully synthetic.
+- **Test environment isolation:** Tests must not hit production APIs. Use local test databases, mock external services at the boundary (HTTP level), and never share test credentials with production credentials.
+- **Credential separation:** Test environments use dedicated test credentials stored in `.env.test` (gitignored). Never reuse production secrets for testing.
+
+## Test Quality Gates
+
+### Before `/deploy`
+
+- [ ] All existing tests pass (`pytest` / `npm test`)
+- [ ] New or modified code has corresponding test coverage (per Test Compliance Matrix above)
+- [ ] `pr-test-analyzer` reports no critical gaps (severity ≥ 8)
+- [ ] `silent-failure-hunter` reports no critical issues on error handling paths
+- [ ] No PII in test fixtures (per Test Data Handling above)
+- [ ] Security-sensitive changes reviewed by `security-reviewer` agent
+
+### Before session closeout
+
+- [ ] Were tests written or updated for the changes made this session?
+- [ ] If no tests were written — is there a documented reason? (e.g., pure config change, documentation-only)
+- [ ] Any test failures are resolved or tracked in Asana with context
+
+### Minimum coverage expectations
+
+These are not rigid line-coverage targets. Focus on **behavioral coverage** of critical paths:
+
+- **API endpoints:** Happy path + at least one error path + auth boundary
+- **Business logic:** Core calculation/decision paths + edge cases identified by `pr-test-analyzer`
+- **Data pipelines:** Input validation + transformation correctness + output format
+- **Auth/permissions:** Authorized access + unauthorized rejection + role boundaries
 
 ## Third-Party Review
 

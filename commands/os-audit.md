@@ -48,8 +48,7 @@ Read `~/.claude/plugins/installed_plugins.json` and check:
 
 ### Recommended Plugins
 Check if these optional but recommended plugins are installed:
-- `pr-review-toolkit` — test quality analysis
-- `test-generator` — automated test generation (if evaluated and adopted)
+- `pr-review-toolkit@claude-plugins-official` — PR review suite with 6 agents: code-reviewer, pr-test-analyzer, silent-failure-hunter, code-simplifier, comment-analyzer, type-design-analyzer. Provides `/pr-review-toolkit:review-pr` command.
 
 ### MCP Servers
 Check `~/.claude.json` and workspace `settings.json` for configured MCP servers:

@@ -22,6 +22,11 @@ Review the current conversation to identify:
 - Updated priorities or strategic shifts
 - New client information or relationship updates
 
+**Test coverage check:**
+- Were tests written or updated for code changes made this session?
+- If not, is there a documented reason (config-only change, documentation, planning session)?
+- Note: this is a prompt, not a hard gate. Capture the answer in the closeout record.
+
 **Claude Code learnings:**
 - Bash commands that were used or discovered
 - Code style patterns followed

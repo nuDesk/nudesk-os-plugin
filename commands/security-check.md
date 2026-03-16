@@ -94,6 +94,30 @@ grep -r "os.getenv\|os.environ" --include="*.py"
   grep -r "sk-\|GOCSPX-\|BEGIN PRIVATE KEY" docs/ README.md 2>/dev/null
   ```
 
+### 5. Test Coverage for Security-Sensitive Code
+
+- [ ] **Check that modified source files have corresponding test files**
+  ```bash
+  # For Python projects: check if tests/ mirrors src/ structure
+  for f in $(git diff --name-only --diff-filter=AM HEAD~5 -- '*.py' | grep -v test); do
+    test_file="tests/test_$(basename $f)"
+    test -f "$test_file" && echo "COVERED: $f -> $test_file" || echo "MISSING: $f has no test at $test_file"
+  done
+  ```
+
+- [ ] **Check that auth/permission code has dedicated tests**
+  ```bash
+  grep -rl "auth\|permission\|role\|token" --include="*.py" src/ | while read f; do
+    test_file="tests/test_$(basename $f)"
+    test -f "$test_file" && echo "COVERED: $f" || echo "WARNING: auth-related file $f has no test"
+  done
+  ```
+
+- [ ] **Verify no real credentials in test fixtures**
+  ```bash
+  grep -r "sk-\|GOCSPX-\|BEGIN PRIVATE KEY\|password.*=.*['\"][^'\"]*[a-zA-Z0-9]" tests/ fixtures/ test_data/ 2>/dev/null
+  ```
+
 ## Output Format
 
 Present findings as a markdown table:
