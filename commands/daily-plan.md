@@ -28,25 +28,28 @@ Search for tasks assigned to me:
 Also check for tasks in "Agent Queue" status (these should be called out separately as automatable).
 
 ### Google Calendar — Today's Schedule
-Use the **google-workspace MCP server** (NOT claude.ai connectors). Call `get_events` with:
-- `user_google_email`: the user's email from CLAUDE.md
-- `calendar_id`: `primary`
-- `time_min` / `time_max`: today's date boundaries (ISO 8601, UTC)
-- `max_results`: 25
+Use the **`gws` CLI** via Bash (NOT claude.ai connectors). Run:
+```
+gws calendar events list --params '{"calendarId": "primary", "timeMin": "<today>T00:00:00Z", "timeMax": "<today>T23:59:59Z", "maxResults": 25, "singleEvents": true, "orderBy": "startTime"}'
+```
 
 Map committed time blocks and note gaps available for focused work.
 
-**If auth is needed:** The tool will return an authorization URL. Present it to the user and note "Calendar data unavailable — Google Workspace MCP needs re-auth."
+**If auth fails:** Note "Calendar data unavailable — run `gws auth login -s calendar` to re-auth."
 
 ### Gmail — Flagged/Important Unread
-Use the **google-workspace MCP server** (NOT claude.ai connectors). Call `search_gmail_messages` with:
-- `user_google_email`: the user's email from CLAUDE.md
-- `query`: `to:<user-email> is:important is:unread newer_than:1d`
-- `page_size`: 15
+Use the **`gws` CLI** via Bash (NOT claude.ai connectors). Run:
+```
+gws gmail users messages list --params '{"userId": "me", "q": "is:important is:unread newer_than:1d", "maxResults": 15}'
+```
+Then fetch individual message details with:
+```
+gws gmail users messages get --params '{"userId": "me", "id": "<messageId>"}'
+```
 
 Prioritize messages from known contacts listed in CLAUDE.md Working Memory. Flag anything that looks time-sensitive or requires a response.
 
-**If auth is needed:** Present the authorization URL and note "Gmail data unavailable — Google Workspace MCP needs re-auth."
+**If auth fails:** Note "Gmail data unavailable — run `gws auth login -s gmail` to re-auth."
 
 ### Fireflies — Recent Meeting Action Items
 Use `fireflies_get_transcripts` for the past 2 days. Extract action items assigned to the user from meeting summaries. These represent commitments that need follow-through.

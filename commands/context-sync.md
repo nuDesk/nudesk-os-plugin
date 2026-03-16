@@ -29,10 +29,10 @@ Use Asana MCP tools to:
 - Look for TODO comments in recently modified files
 
 ### 4. Google Workspace Activity (last 7 days)
-Use google-workspace MCP tools (authenticated as kenny@nudesk.ai) to:
-- **Calendar:** Pull events from the last 7 days — flag meetings relevant to this project or focus area
-- **Gmail:** Search for recent threads related to the project (match repo name, client name, or focus area keywords) — summarize key decisions, requests, or blockers
-- **Chat:** Check relevant Google Chat spaces for project-related messages and discussions
+Use the **`gws` CLI** via Bash to:
+- **Calendar:** `gws calendar events list --params '{"calendarId": "primary", "timeMin": "<7d-ago>T00:00:00Z", "timeMax": "<today>T23:59:59Z", "maxResults": 50, "singleEvents": true, "orderBy": "startTime"}'` — flag meetings relevant to this project or focus area
+- **Gmail:** `gws gmail users messages list --params '{"userId": "me", "q": "<project-keywords> newer_than:7d", "maxResults": 20}'` — summarize key decisions, requests, or blockers
+- **Chat:** `gws chat spaces messages list --params '{"parent": "spaces/<spaceId>", "filter": "createTime > \"<7d-ago>T00:00:00Z\""}'` — check relevant spaces for project-related messages
 
 Summarize only what's relevant to this project — skip unrelated meetings and emails.
 

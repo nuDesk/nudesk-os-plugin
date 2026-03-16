@@ -111,12 +111,10 @@ Track changes made for the dashboard summary.
 
 ## Step 4: Calendar Density (next 2-4 weeks)
 
-Use the **google-workspace MCP server**. Call `get_events` with:
-- `user_google_email`: user's email from CLAUDE.md
-- `calendar_id`: `primary`
-- `time_min`: today (ISO 8601, UTC)
-- `time_max`: today + 28 days (ISO 8601, UTC)
-- `max_results`: 100
+Use the **`gws` CLI** via Bash. Run:
+```
+gws calendar events list --params '{"calendarId": "primary", "timeMin": "<today>T00:00:00Z", "timeMax": "<today+28d>T23:59:59Z", "maxResults": 100, "singleEvents": true, "orderBy": "startTime"}'
+```
 
 ### Analysis by Week
 

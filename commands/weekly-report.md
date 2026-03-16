@@ -135,14 +135,18 @@ Use Google Calendar MCP tools to list events for the upcoming Monday through Fri
 **If Calendar MCP is not available:** Note "Calendar data unavailable" and continue.
 
 #### Gmail — Important Unread/Unanswered
-Use the **google-workspace MCP server**. Call `search_gmail_messages` with:
-- `user_google_email`: user's email from CLAUDE.md
-- `query`: `to:<user-email> is:important newer_than:7d`
-- `page_size`: 20
+Use the **`gws` CLI** via Bash. Run:
+```
+gws gmail users messages list --params '{"userId": "me", "q": "is:important newer_than:7d", "maxResults": 20}'
+```
+Then fetch individual message details with:
+```
+gws gmail users messages get --params '{"userId": "me", "id": "<messageId>"}'
+```
 
 Focus on threads >24hrs old without a response. Prioritize messages from known contacts in CLAUDE.md Working Memory.
 
-**If Gmail MCP is not available:** Note "Gmail data unavailable" and continue.
+**If `gws` auth fails:** Note "Gmail data unavailable" and continue.
 
 ### Step 7b: Synthesize Using Executive Planning Framework
 

@@ -1,6 +1,6 @@
 ---
 description: Guided setup wizard for Executive OS — configure CLAUDE.md, Asana, memory, hooks, and MCP servers
-allowed-tools: Read, Write, Edit, Bash, Grep, Glob, mcp__plugin_asana_asana__asana_list_workspaces, mcp__plugin_asana_asana__asana_get_user, mcp__plugin_asana_asana__asana_get_teams_for_workspace, mcp__plugin_asana_asana__asana_get_projects_for_team, mcp__plugin_asana_asana__asana_get_project, mcp__plugin_asana_asana__asana_search_tasks, mcp__plugin_asana_asana__asana_get_task, mcp__google-workspace__list_calendars, mcp__google-workspace__search_gmail_messages
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob, mcp__plugin_asana_asana__asana_list_workspaces, mcp__plugin_asana_asana__asana_get_user, mcp__plugin_asana_asana__asana_get_teams_for_workspace, mcp__plugin_asana_asana__asana_get_projects_for_team, mcp__plugin_asana_asana__asana_get_project, mcp__plugin_asana_asana__asana_search_tasks, mcp__plugin_asana_asana__asana_get_task
 ---
 
 Guided, interactive setup for Executive OS. Detects what's already configured, walks through what's missing, and auto-discovers Asana GIDs via MCP.
@@ -38,7 +38,8 @@ Run all of these checks in parallel:
 - Status: **Complete** (exists with real GIDs), **Partial** (exists but has placeholders), or **Missing**
 
 ### 0d. MCP Servers
-- Read `~/.claude.json` (global config) — check for `mcpServers` keys containing: `asana`, `google-workspace`, `google-drive`, `fireflies`, `hubspot`
+- Read `~/.claude.json` (global config) — check for `mcpServers` keys containing: `n8n-mcp`, `figma`, `context7`, `playwright`
+- Check for `gws` CLI: run `gws auth status` via Bash to verify Google Workspace access
 - Also check `~/.claude/settings.json` and any workspace-level config
 - For each, report: **Configured** or **Not configured**
 
@@ -166,20 +167,20 @@ This step requires no user interaction unless all directories already exist. If 
 - If successful, show the workspace name(s) and mark as verified
 - If it errors, report the error and suggest troubleshooting (re-auth, check token)
 
-### 3b. Google Workspace (Recommended)
+### 3b. Google Workspace via `gws` CLI (Recommended)
 
-**If not configured:**
-- Note that it enables Gmail search, Calendar integration, and Google Chat in daily-plan and context-sync
-- Point to the setup guide: `~/Projects/executive-os-plugin/references/mcp-setup/google-workspace-mcp-setup.md`
+**If not installed:**
+- Note that it enables Gmail, Calendar, Chat, Drive, Docs, Sheets, Slides, and People access
+- Point to the setup guide: `~/Projects/executive-os-plugin/references/mcp-setup/gws-cli-setup.md`
 - Do not block on this
 
-**If configured:**
-- Smoke test: call `list_calendars` (use the user's email from CLAUDE.md if available)
+**If installed:**
+- Smoke test: run `gws auth status` via Bash — check for `"token_valid": true`
 - Report success or auth failure
 
-### 3c. Optional Servers (Google Drive, Fireflies, HubSpot)
+### 3c. Optional MCP Servers (Fireflies, HubSpot)
 
-For each: note whether configured. If not, briefly explain what it enables. Do not push for installation.
+For each claude.ai connector: note whether configured. If not, briefly explain what it enables. Do not push for installation.
 
 ### Present MCP Summary
 
