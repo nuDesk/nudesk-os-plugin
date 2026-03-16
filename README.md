@@ -46,6 +46,17 @@ An executive operating system for Claude Code. Turns Claude into a daily operato
 | `memory-scaffold.md` | Memory directory structure and glossary starter |
 | `hooks-settings.json.template` | SOC 2 .env blocker hook for workspace settings |
 
+### References
+
+Institutional knowledge docs bundled with the plugin — platform constraints, security procedures, MCP setup guides, and brand guides. These are generic best-practice docs (org-specific IDs and credentials scrubbed).
+
+| Directory | Contents |
+|-----------|----------|
+| `references/platform-references/` | Verified patterns and anti-patterns for managed platforms (n8n Cloud, GCP Cloud Run, Google APIs, HubSpot, Apollo, Lovable) |
+| `references/security/` | Security review guide — safe commands, dangerous commands to avoid, incident response |
+| `references/mcp-setup/` | Step-by-step setup guides for Google Drive and Google Workspace MCP servers |
+| `references/brand-guides/` | Visual identity and brand voice rules for client-facing deliverables |
+
 ## Prerequisites
 
 ### MCP Servers
@@ -151,9 +162,9 @@ This means:
 
 ### Platform References
 
-Commands that write or modify code check `~/Projects/system_docs/platform_references/` for platform constraints before executing. This prevents repeat debugging across team members when working with managed platforms (n8n, Cloud Run, Google APIs, HubSpot, Apollo).
+Commands that write or modify code check the bundled `references/platform-references/` directory for platform constraints before executing. This prevents repeat debugging across team members when working with managed platforms (n8n, Cloud Run, Google APIs, HubSpot, Apollo, Lovable).
 
-Platform reference docs are maintained independently in `system_docs/` — the plugin references them but doesn't bundle them. See the CLAUDE.md template for the full table.
+After installing the plugin, reference docs are available at `~/Projects/executive-os-plugin/references/`. The CLAUDE.md template points to these paths by default.
 
 ## Recommended Workflow
 
@@ -191,8 +202,7 @@ For new nuDesk team members setting up Executive OS:
 
 | Location | Purpose | Examples |
 |----------|---------|---------|
-| `~/Projects/executive-os-plugin/` | Plugin source code & docs | commands, skills, agents, templates, README |
-| `~/Projects/system_docs/` | Cross-project reference library | platform constraints, MCP setup, security guide |
+| `~/Projects/executive-os-plugin/` | Plugin source code, docs, and references | commands, skills, agents, templates, references, README |
 | `~/.claude/` | Runtime config (hidden, auto-managed) | CLAUDE.md, memory/, plugins/, settings |
 | `~/Projects/.claude/` | Workspace-scoped overrides | project-specific skills, hooks, agents |
 
