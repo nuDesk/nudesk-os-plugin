@@ -7,7 +7,7 @@ Run a read-only security audit of the current project. This command checks for c
 
 **CRITICAL: Do NOT read credential file contents. Check existence and gitignore status only.**
 
-For the full review guide, see: `~/Projects/system_docs/config/SECURITY_REVIEW_GUIDE.md`
+For the full review guide, see: `~/Projects/executive-os-plugin/references/security/security-review-guide.md`
 
 ## Safe Commands Only
 

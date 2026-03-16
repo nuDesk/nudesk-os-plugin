@@ -11,7 +11,7 @@ Scan the current project structure and prioritize these directories (in order):
 
 Adapt to the project's actual structure — not all directories will exist. Focus on where auth, data handling, and external integrations live.
 
-For safe credential review procedures, see `~/Projects/system_docs/config/SECURITY_REVIEW_GUIDE.md`.
+For safe credential review procedures, see `~/Projects/executive-os-plugin/references/security/security-review-guide.md`.
 
 ## What to Check
 

@@ -80,7 +80,7 @@ Reference the SOC 2 compliance skill for the full checklist.
 
 ## 4. Platform References
 
-Check `~/Projects/system_docs/platform_references/` exists and list what's present:
+Check `~/Projects/executive-os-plugin/references/platform-references/` exists and list what's present:
 
 **Expected docs:**
 | Platform | File | Status |
@@ -97,7 +97,7 @@ Flag any platforms referenced in CLAUDE.md "My Stack" section that don't have a 
 ## 5. File Organization
 
 - [ ] Plugin repo cloned at `~/Projects/executive-os-plugin/`
-- [ ] `~/Projects/system_docs/` exists with expected subdirectories
+- [ ] `~/Projects/executive-os-plugin/references/` exists with expected subdirectories
 - [ ] No orphaned config files (e.g., old `.claude/commands/` files that duplicate plugin commands)
 
 ## Output
