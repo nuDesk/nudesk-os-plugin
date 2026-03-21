@@ -70,7 +70,7 @@ RECOMMENDED ACTION:
 Proceed / modify / skip?
 ```
 
-Apply smart routing logic from `~/.claude/memory/asana-config.md` (only for new tasks). The config file contains a routing table that maps context clues to Asana project GIDs. Use project GIDs directly — no typeahead searches needed.
+Apply smart routing logic for project assignment (only for new tasks): use the **full routing table** in `~/.claude/memory/asana-config.md` (Projects — Smart Routing Table section). Use the project GIDs directly — no typeahead search needed. If no routing match is found, ask the user which project to use.
 
 Only suggest tasks that are genuinely material — skip trivial or already-tracked items.
 
@@ -78,7 +78,11 @@ Only suggest tasks that are genuinely material — skip trivial or already-track
 
 **IMPORTANT: STOP HERE.** Present the suggested tasks and wait for the user to respond (create all / select numbers / skip / modify). Do NOT proceed to Step 3 until the user has confirmed their task choices and tasks have been created (or skipped). This is a hard gate — Steps 3-5 only run after the user responds to Step 2.
 
-When the user responds, create only approved tasks using Asana MCP tools. Include the subtask bullets in the Asana task description (in `html_notes` format). If the user provides modifications (different deadlines, project routing, etc.), apply those before creating.
+When the user responds, create only approved tasks using Asana MCP tools with:
+- `assignee`: `me`
+- `custom_fields`: Task Progress = **Done** (`1211903626313624`), Type, and Priority — using GIDs from config
+- Include session work summary in the `notes` field (plain text only — `html_notes` rejects complex HTML)
+- If the user provides modifications (different deadlines, project routing, etc.), apply those before creating.
 
 ## Step 3: Update Memory
 
