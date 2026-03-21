@@ -80,6 +80,7 @@ Only suggest tasks that are genuinely material — skip trivial or already-track
 
 When the user responds, create only approved tasks using Asana MCP tools with:
 - `assignee`: `me`
+- `completed`: `true` — always set this; it is independent of the Task Progress custom field and both must be set
 - `custom_fields`: Task Progress = **Done** (`1211903626313624`), Type, and Priority — using GIDs from config
 - Include session work summary in the `notes` field (plain text only — `html_notes` rejects complex HTML)
 - If the user provides modifications (different deadlines, project routing, etc.), apply those before creating.
