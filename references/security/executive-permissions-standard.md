@@ -45,7 +45,7 @@ Read, Edit, Write, Glob, Grep, Search, WebFetch, WebSearch, Bash(*)
 | **Google Drive** | All 12 read tools (search, listFolder, doc/sheet/slides content, comments, permissions, shared drives) | Document access for context gathering |
 | **Gamma** | All 4 tools (presentations, status, themes, folders) | Deck generation for client deliverables |
 | **Context7** | Both tools (resolve-library-id, get-library-docs) | Live documentation lookup during development |
-| **Playwright** | browser_take_screenshot, browser_click, browser_type | UI screenshots, interaction, and text input for design review, testing, and debugging |
+| **Playwright** | browser_take_screenshot, browser_click, browser_type, browser_evaluate | UI screenshots, interaction, text input, and JS evaluation for design review, testing, and debugging |
 
 ### Global Deny List — Hard Guardrails
 
@@ -123,7 +123,7 @@ These rules apply to **all** permission configurations:
 
 | Project | MCP Tools | Bash Scope | Deny List | Risk Level |
 |---------|-----------|-----------|-----------|-----------|
-| **Global** | Full Asana, Fireflies, HubSpot, GWS, Drive, Gamma, Context7, Playwright (screenshot, click, type) | `Bash(*)` | Force push, hard reset, rm -rf, clean, branch -D | Controlled |
+| **Global** | Full Asana, Fireflies, HubSpot, GWS, Drive, Gamma, Context7, Playwright (screenshot, click, type, evaluate) | `Bash(*)` | Force push, hard reset, rm -rf, clean, branch -D | Controlled |
 | **Prime Nexus/Portal** | HubSpot (4 tools) | File-path-specific whitelist | + rm, sudo, .env reads | Restrictive |
 | **Prime Nexus/AI_SDR_Campaigns** | HubSpot (6), Drive (6), n8n (2), Asana (1) | Broad bash | + rm, sudo, unlink, shred | Medium |
 | **MDF/mdf-notice-agent** | n8n (7) | GCP deploy + LibreOffice | Standard | Medium |
