@@ -164,16 +164,31 @@ After installing the plugin, reference docs are available at `~/Projects/nudesk-
 8. **As needed:** `/nudesk-os:security-check` — Security audit before deployments or reviews
 9. **As needed:** `/nudesk-os:context-sync` — Catch up on a project after time away
 
-## Onboarding Checklist (New Team Members)
+## Onboarding (New Team Members)
 
-For new nuDesk team members setting up nuDesk OS:
+See **[INSTALL.md](./INSTALL.md)** for the full step-by-step guide.
 
-1. [ ] Install Claude Code CLI
-2. [ ] Clone the plugin repo: `git clone https://github.com/nuDesk/nudesk-os-plugin.git ~/Projects/nudesk-os-plugin/`
-3. [ ] Install the plugin: `claude plugin add --url https://github.com/nuDesk/nudesk-os-plugin`
-4. [ ] Install Asana MCP: `claude mcp add asana -- npx -y @anthropic/asana-mcp-server`
-5. [ ] Run `/nudesk-os:os-setup` — the wizard handles CLAUDE.md, memory directories, Asana config (auto-discovers GIDs), compliance hooks, and plugin recommendations
-6. [ ] Run `/nudesk-os:daily-plan` to confirm data sources are connected
+**Quick start:**
+
+```bash
+# Prerequisites: Homebrew + Claude Code CLI must be installed first
+
+# 1. Install nuDesk OS
+claude plugin marketplace add https://github.com/nuDesk/nudesk-os-plugin
+claude plugin install nudesk-os@nudesk-os
+
+# 2. Install required plugins
+claude plugin add asana@claude-plugins-official
+claude plugin add commit-commands@claude-plugins-official
+claude plugin add ralph-loop@claude-plugins-official
+claude plugin add security-guidance@claude-plugins-official
+claude plugin add superpowers@claude-plugins-official
+claude plugin add skill-creator@claude-plugins-official
+
+# 3. Run setup wizard — handles everything else
+# (Open Claude Code and run:)
+# /nudesk-os:os-setup
+```
 
 ## Where Things Live
 
