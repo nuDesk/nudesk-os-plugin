@@ -114,6 +114,4 @@ OAuth tokens are stored locally in macOS Keychain (`~/.config/gws/credentials.en
 
 ## Superseded Guides
 
-The following guides are deprecated — retained for reference only:
-- `google-workspace-mcp-setup.md` — replaced by this guide
-- `google-drive-mcp-setup.md` — replaced by this guide
+`google-workspace-mcp-setup.md` and `google-drive-mcp-setup.md` have been removed. This guide replaces both.

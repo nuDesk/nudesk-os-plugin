@@ -36,7 +36,7 @@ Before writing code for any managed platform, check these constraint docs (bundl
 | Category | Path | Contents |
 |----------|------|----------|
 | Security | `~/Projects/executive-os-plugin/references/security/` | Security review guide — safe commands, incident response |
-| gws CLI Setup | `~/Projects/executive-os-plugin/references/mcp-setup/gws-cli-setup.md` | Google Workspace CLI setup — install, auth, scopes, troubleshooting |
+| gws CLI Setup | `~/Projects/executive-os-plugin/references/setup/gws-cli-setup.md` | Google Workspace CLI setup — install, auth, scopes, troubleshooting |
 | Brand Guides | `~/Projects/executive-os-plugin/references/brand-guides/` | Client-facing visual identity and voice rules |
 
 ## Google Workspace (gws CLI)
@@ -47,7 +47,7 @@ All Google Workspace services (Gmail, Calendar, Drive, Chat, Docs, Sheets, Slide
 gws <service> <resource> <method> --params '{"key": "value"}'
 ```
 
-Each team member authenticates with their own nuDesk Google account. Run `gws auth setup` to configure. See `~/Projects/executive-os-plugin/references/mcp-setup/gws-cli-setup.md` for full setup guide.
+Each team member authenticates with their own nuDesk Google account. Run `gws auth setup` to configure. See `~/Projects/executive-os-plugin/references/setup/gws-cli-setup.md` for full setup guide.
 
 ## Company Context
 - [Company Name] — [one-line description]

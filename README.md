@@ -58,7 +58,7 @@ Institutional knowledge docs bundled with the plugin — platform constraints, s
 |-----------|----------|
 | `references/platform-references/` | Verified patterns and anti-patterns for managed platforms (n8n Cloud, GCP Cloud Run, Google APIs, HubSpot, Apollo, Lovable) |
 | `references/security/` | Security review guide — safe commands, dangerous commands to avoid, incident response |
-| `references/mcp-setup/` | Setup guide for the `gws` CLI (Google Workspace via Bash) |
+| `references/setup/` | Setup guide for the `gws` CLI (Google Workspace via Bash) |
 | `references/brand-guides/` | Visual identity and brand voice rules for client-facing deliverables |
 
 ## Prerequisites
@@ -86,7 +86,7 @@ npx skills add --yes --global https://github.com/googleworkspace/cli
 gws auth setup
 ```
 
-See `references/mcp-setup/gws-cli-setup.md` for the full setup guide.
+See `references/setup/gws-cli-setup.md` for the full setup guide.
 
 ### Asana Custom Fields
 

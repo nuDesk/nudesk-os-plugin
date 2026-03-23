@@ -201,7 +201,7 @@ Parse the output:
 - Instruct: "Run `gws auth setup` to authenticate with your nuDesk Google account. A browser window will open — sign in with your nuDesk email (@nudesk.ai)."
 - Call `AskUserQuestion`: "Run `gws auth setup` now and let me know when you've completed the browser sign-in."
 - **→ Your turn ends here.** After they confirm, run `gws auth status` again to verify.
-- If it still fails: point to `~/Projects/executive-os-plugin/references/mcp-setup/gws-cli-setup.md` for detailed troubleshooting.
+- If it still fails: point to `~/Projects/executive-os-plugin/references/setup/gws-cli-setup.md` for detailed troubleshooting.
 
 **If `token_valid` is `true`:** Proceed to 3b-iii.
 
@@ -216,7 +216,7 @@ gws gmail users messages list --params '{"userId":"me","maxResults":1}'
 **If failed:** Diagnose:
 - Wrong account: "Are you authenticated with your nuDesk email? Run `gws auth status` to check which account is active."
 - Missing Gmail scope: "Run `gws auth login -s gmail` to add Gmail access."
-- Other error: Reference `~/Projects/executive-os-plugin/references/mcp-setup/gws-cli-setup.md` troubleshooting section.
+- Other error: Reference `~/Projects/executive-os-plugin/references/setup/gws-cli-setup.md` troubleshooting section.
 
 #### 3b-iv. Scope check
 
@@ -394,7 +394,7 @@ ls ~/.claude/skills/nudesk-brand-styling/SKILL.md
 
 If any are missing, run from the plugin directory:
 ```bash
-cd ~/Projects/executive-os-plugin/skills
+cd ~/Projects/executive-os-plugin/skills/bundles
 unzip -o srd-generator.skill -d ~/.claude/skills/
 unzip -o ai-solution-architect.skill -d ~/.claude/skills/
 unzip -o nudesk-brand-styling.skill -d ~/.claude/skills/

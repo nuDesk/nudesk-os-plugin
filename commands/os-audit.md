@@ -60,7 +60,7 @@ Run: `ls ~/.claude/skills/srd-generator/SKILL.md ~/.claude/skills/ai-solution-ar
 
 If any are missing, reinstall from the plugin:
 ```bash
-cd ~/Projects/executive-os-plugin/skills
+cd ~/Projects/executive-os-plugin/skills/bundles
 unzip -o srd-generator.skill -d ~/.claude/skills/
 unzip -o ai-solution-architect.skill -d ~/.claude/skills/
 unzip -o nudesk-brand-styling.skill -d ~/.claude/skills/
@@ -77,7 +77,7 @@ Run `gws auth status` via Bash — check for `"token_valid": true`. Google Works
 
 Smoke test: `gws gmail users messages list --params '{"userId":"me","maxResults":1}'`
 
-Note which are configured vs. missing. Reference `~/Projects/executive-os-plugin/references/mcp-setup/gws-cli-setup.md` for setup instructions.
+Note which are configured vs. missing. Reference `~/Projects/executive-os-plugin/references/setup/gws-cli-setup.md` for setup instructions.
 
 Note: The **security-reviewer** agent is bundled at `~/Projects/executive-os-plugin/agents/security-reviewer.md` — it is available for security audits via the Agent tool and does not require MCP configuration.
 
