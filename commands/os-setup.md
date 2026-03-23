@@ -367,20 +367,44 @@ Call `AskUserQuestion`: "Here's your generated Asana config. Want me to write it
 
 ## Step 6: Recommended Plugins and Skills
 
-**If pr-review-toolkit is installed:** Show status.
+Check which of the following plugins are installed by reading `~/.claude/plugins/installed_plugins.json`. Present status for each, then provide the install block for any that are missing.
 
-**If not installed:**
+### Required Plugins
 
-Inform the user:
+These are needed for core nuDesk OS functionality:
 
-> **pr-review-toolkit** provides 6 specialized review agents (code-reviewer, pr-test-analyzer, silent-failure-hunter, code-simplifier, comment-analyzer, type-design-analyzer) and a `/pr-review-toolkit:review-pr` command for comprehensive PR reviews. Optional — primarily useful for teams doing formal code review workflows.
->
-> Install with:
-> ```
-> claude plugin add pr-review-toolkit@claude-plugins-official
-> ```
+| Plugin | What it provides | Install |
+|--------|-----------------|---------|
+| `asana` | Asana MCP server — powers all task management commands | `claude plugin add asana@claude-plugins-official` |
+| `commit-commands` | `/commit`, `/ship`, `/commit-push-pr`, `/clean_gone` | `claude plugin add commit-commands@claude-plugins-official` |
+| `ralph-loop` | Infinite recursion protection for agent loops | `claude plugin add ralph-loop@claude-plugins-official` |
+| `security-guidance` | Security best practices embedded in Claude's behavior | `claude plugin add security-guidance@claude-plugins-official` |
 
-This is informational only — do not auto-install. The user can run the command themselves if interested.
+### Recommended Plugins
+
+Strongly recommended for nuDesk workflows:
+
+| Plugin | What it provides | Install |
+|--------|-----------------|---------|
+| `superpowers` | Planning, debugging, code review, TDD, and git worktree skills | `claude plugin add superpowers@claude-plugins-official` |
+| `skill-creator` | Create, edit, and eval custom skills | `claude plugin add skill-creator@claude-plugins-official` |
+
+### Role-Specific Plugins
+
+Install only if relevant to the team member's role:
+
+| Plugin | What it provides | Who needs it |
+|--------|-----------------|--------------|
+| `frontend-design` | High-quality frontend component generation | Anyone building UI with Lovable or direct HTML/CSS |
+| `playwright` | Browser automation via Playwright MCP | Automation and QA workflows |
+
+Install role-specific plugins with:
+```bash
+claude plugin add frontend-design@claude-plugins-official
+claude plugin add playwright@claude-plugins-official
+```
+
+This is informational only — do not auto-install any plugins. The user runs install commands themselves.
 
 ### Recommended Skills
 
@@ -417,7 +441,7 @@ Proceed to Step 7.
 Re-run the Step 0 checks (all in parallel). Present a final status report:
 
 ```
-EXECUTIVE OS SETUP COMPLETE — [Date]
+nuDesk OS SETUP COMPLETE — [Date]
 
 PASSED
 - [Item]: [Brief note]
