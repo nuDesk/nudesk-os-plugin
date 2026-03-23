@@ -86,29 +86,24 @@ Extract from each relevant meeting:
 - Brief summary
 - Action items assigned to the user
 
-## Step 6: Ask Clarifying Questions
+## Step 6: Chief of Staff Analysis
 
-After gathering automated data, ask **up to 5 clarifying questions, one at a time**:
+Act as Kenny's chief of staff — not a reporter. Analyze all gathered data (Asana, Fireflies, prior week goals from Step 3) and surface the 1-2 questions the *data* actually demands. Do not ask a fixed set of questions. Do not ask for information already visible in the data.
 
-1. **Key outcomes or decisions** — What got resolved or decided this week?
-2. **Strategic shifts or pivots** — Any changes in direction or priorities?
-3. **Client relationship updates** — Wins, escalations, or notable interactions?
-4. **Blockers or items to flag** — What's stuck or needs attention?
-5. **Context gaps** — Anything not obvious from task names or meeting summaries?
+**Always ask (mandatory):** "For Champions Funding, what are your MTD Fundings and Submissions vs. budget?" — even if no other questions are needed.
 
-Ask questions selectively based on what the automated data doesn't cover.
+**Then look for and ask about the 1-2 most important gaps:**
+- Gaps between last week's stated goals (Step 3) and what actually got done
+- Uncaptured commitments from Fireflies not reflected in Asana
+- Decisions or pivots made that aren't obvious from task names
+- Things conspicuously absent, stuck, or at risk
+- Context that would materially change how the report reads
+
+Ask one question at a time. Wait for each response before asking the next.
 
 ## Step 7: Synthesize Upcoming Week Priorities
 
 Instead of asking a blank question, synthesize a data-driven priority suggestion from everything gathered so far (Asana tasks, Fireflies action items, user input from Step 6) plus forward-looking signals. This follows the same pattern as `/daily-plan` Step 3 but scoped to the upcoming week.
-
-### Step 7-pre: Check for Recent Strategic Review
-
-Ask: "Did you run a /strategic-review this week?"
-
-**If yes:** Skip Step 7a entirely (Calendar, HubSpot, Gmail pulls are redundant — strategic-review already gathered this data). Use strategic themes from the review as the basis for upcoming week priorities. Proceed directly to Step 7b.
-
-**If no:** Proceed with Step 7a as written (self-sufficient fallback).
 
 ### Step 7a: Pull Forward-Looking Signals
 
@@ -216,50 +211,137 @@ Then ask: "These are the suggested priorities for next week based on this week's
 
 Wait for the user to confirm or adjust before proceeding to the report draft.
 
+### Step 7d: Task Rescheduling
+
+After priorities are confirmed in Step 7c, help spread next week's tasks across the week based on priorities, effort, and calendar load. This prevents pile-ups on Monday or Friday.
+
+**Using data already gathered (Step 4 upcoming tasks + Step 7a calendar):**
+
+1. Map each open task due in the next 7 days against the calendar:
+   - Identify overloaded days: many tasks due AND heavy meeting load (>3h meetings)
+   - Identify under-utilized days: light calendar AND few tasks due
+   - Flag tasks specifically clustered on Monday or Friday
+
+2. Cross-reference against confirmed priorities from Step 7c:
+   - Higher-priority items should land on days with available deep-work capacity
+   - Effort-intensive tasks (multi-day) should avoid meeting-heavy days
+
+3. Present a table — only include tasks that would benefit from moving (cap at 5-7 suggestions):
+
+```
+TASK SCHEDULE REVIEW — [Next Week Date Range]
+
+Task                     | Current Due | Suggested Due | Reason
+-------------------------|-------------|---------------|---------------------------
+[Task name]              | Monday      | Wednesday     | Monday heavy (3 meetings)
+[Task name]              | Friday      | Tuesday       | High priority, clear slot
+```
+
+4. Ask: "Approve all, review one by one, or skip?"
+
+5. Execute approved changes via `asana_update_task` (set `due_on`). Confirm each change.
+
+**STOP — wait for user response before proceeding to Step 8.**
+
+---
+
 ## Step 8: Draft Report
 
-Generate the report using this template. Target **200-500 words**.
+Generate the report using this template. Target **500-800 words**.
 
-The report structure should include:
-- Header with report name, date range, and key metrics (worked hours, tasks completed, meetings attended)
-- Executive Summary (1 paragraph, 3-5 sentences, outcome-focused)
-- This Week's Focus (prior goals + outcomes)
-- Deeper Dive sections organized by the user's work categories (e.g., Account Management, Development, General Management, Business Development)
-- Upcoming Week Priorities (from Step 7)
-- Tag the report recipient at the end
+### Report Structure
+
+```
+🗓 Week of [Start Date – End Date] – KKS Weekly Update
+
+Summary: [One paragraph, 3-5 sentences. Cover the week at a high level across all active initiatives. Be candid — name wins and misses. Do not list tasks; synthesize themes and outcomes.]
+
+[Emoji] [Client or Initiative Name]
+Status: [Short health descriptor — e.g., "Active — strong progress", "Behind — competing priorities", "On track"]
+Progress:
+- [Narrative bullet: explain what happened AND why, with context and rationale]
+- [Include data points or metrics inline where available]
+- [Flag decisions made, pivots taken, or risks identified]
+Next Steps:
+- [Specific forward action for next week]
+- [Continue as needed]
+
+[Repeat for each active initiative]
+
+[Optional — include only if relevant:]
+⚠️ Flag for review: [One item needing attention or a decision]
+
+🎯 Key Milestones Going Into Next Week
+[Emoji] [Initiative]: [One-line directional milestone]
+[Repeat for each active initiative]
+```
+
+### Organization Rules
+
+**Always use this fixed section order:**
+1. 🏢 Champions Funding
+2. 🤖 AI Development & Enablement
+3. ⚙️ nuDesk Management
+
+**Champions Funding always includes a metrics block immediately after the Status line:**
+```
+🏢 Champions Funding
+Status: [descriptor]
+MTD Fundings: $[actual] / $[budget] ([X]% to budget)
+MTD Submissions: [actual] / [budget] ([X]% to budget)
+Progress:
+- [narrative bullet]
+Next Steps:
+- [forward action]
+```
+- MTD values come from user input in Step 6
+- If user didn't provide them, write: "MTD metrics not provided this week"
+
+**AI Development & Enablement** — agent builds, training programs, internal tools, AI rollouts across clients
+
+**nuDesk Management** — Prime Nexus, operations, finance, compliance (SOC 2), team/admin, business development
+
+- Omit a bucket entirely if there was no activity — don't force empty sections
+- Each bucket follows: Status line + Progress bullets + Next Steps
+- The closing milestone list mirrors all three buckets — one line each, forward-looking
+
+### Progress Bullet Style
+- Narrative, not a task list — explain context and rationale, not just what was done
+- Include data where available (pipeline numbers, percentages, deal sizes)
+- Be candid about misses and delays — include the reason and any decision made
+- Each bullet should stand alone as meaningful to an executive reader
 
 ### Formatting Rules
 - **Plain text only** — No markdown symbols (**, ##, etc.) in the final Asana comment
 - **Asana-native formatting** — Use line breaks, dashes for bullets, colons for emphasis
-- **Scannable** — Bullet points within sections (dashes, not asterisks)
-- **Executive Summary is prose** — Not bullets
-- **Omit empty sections** — Skip any section with no activity
+- **Summary is prose** — Not bullets
+- **Omit empty sections** — Skip any initiative with no activity this week
 
 ### Tone
-- Professional and concise — executive-friendly
-- Outcome-focused — highlight what got done and decided
-- Constructive on risks — flag concerns without being alarmist
-- Forward-looking — connect this week's work to next week's priorities
+- Strategic and narrative — not a task log
+- Candid about misses — name them with rationale, not just omit them
+- Outcome-focused — what moved, what was decided, what changed
+- Forward-looking — each initiative ends with clear next steps
 
 ## Step 9: Post to Asana
 
 After user approves the draft:
 
-1. **Find the recurring task** using `asana_typeahead_search`:
-   - Query: the report task name (from user's CLAUDE.md or convention)
-   - Resource type: task
-   - Workspace: workspace GID from asana-config.md
+1. **Create a new Asana task** using `asana_create_task`:
+   - `name`: `KKS Weekly Milestones & Report — Week of [Start Date]`
+   - `project_id`: `1211894375322111` (Executive Management)
+   - `assignee`: `me`
+   - `due_on`: next Monday from today (ISO 8601, YYYY-MM-DD)
+   - `custom_fields` (JSON string):
+     - Task Progress = In Progress: `{"1211903626313619": "1211903626313621"}`
+     - Type = Reporting: `{"1211907135805437": "1211907135805442"}`
+     - Priority = High: `{"1211907466745700": "1211907466745701"}`
 
-2. **Get the report recipient's user GID** from asana-config.md
+2. **Post the report as a comment** using `asana_create_task_story` on the newly created task:
+   - Full report text
+   - End with a mention of Sean Salas (GID: `1211913018942721`)
 
-3. **Update the task title** using `asana_update_task`:
-   - Add reporting period: `[Report Name] ([Start Date] - [End Date])`
-
-4. **Post the report as a comment** using `asana_create_task_story`:
-   - Include the full report text
-   - End by mentioning the report recipient
-
-5. Confirm: "Report posted to Asana."
+3. Confirm: "Report posted to Asana. Task created — In Progress, due [next Monday date]."
 
 ## Step 10: Update CLAUDE.md Priorities
 
