@@ -50,6 +50,22 @@ Read `~/.claude/plugins/installed_plugins.json` and check:
 Check if these optional but recommended plugins are installed:
 - `pr-review-toolkit@claude-plugins-official` — PR review suite with 6 agents: code-reviewer, pr-test-analyzer, silent-failure-hunter, code-simplifier, comment-analyzer, type-design-analyzer. Provides `/pr-review-toolkit:review-pr` command.
 
+### Required Skills
+Check that these skills are installed at `~/.claude/skills/`:
+- [ ] `srd-generator` — `~/.claude/skills/srd-generator/SKILL.md`
+- [ ] `ai-solution-architect` — `~/.claude/skills/ai-solution-architect/SKILL.md`
+- [ ] `nudesk-brand-styling` — `~/.claude/skills/nudesk-brand-styling/SKILL.md`
+
+Run: `ls ~/.claude/skills/srd-generator/SKILL.md ~/.claude/skills/ai-solution-architect/SKILL.md ~/.claude/skills/nudesk-brand-styling/SKILL.md`
+
+If any are missing, reinstall from the plugin:
+```bash
+cd ~/Projects/executive-os-plugin/skills
+unzip -o srd-generator.skill -d ~/.claude/skills/
+unzip -o ai-solution-architect.skill -d ~/.claude/skills/
+unzip -o nudesk-brand-styling.skill -d ~/.claude/skills/
+```
+
 ### MCP Servers
 Check `~/.claude.json` and workspace `settings.json` for configured MCP servers:
 - [ ] **Asana** — Required
@@ -68,11 +84,15 @@ Note: The **security-reviewer** agent is bundled at `~/Projects/executive-os-plu
 ## 3. Compliance Controls
 
 ### .env Blocker Hook
-Read the workspace `settings.json` (check both `~/.claude/settings.json` and the project-level `.claude/settings.json`):
+Read `~/.claude/settings.json`:
 - [ ] PreToolUse hook exists with `Edit|Write` matcher
 - [ ] Hook blocks `.env` file edits (but allows `.env.example`)
+- [ ] Hook uses the **bash pattern** (correct): `file="$CLAUDE_FILE_PATH"; if [[ "$file" == *.env ...`
+- [ ] Hook does NOT use the old Python pattern (broken): `echo "$CLAUDE_TOOL_INPUT" | python3 -c ...`
 
-If missing, provide the hook JSON from `templates/hooks-settings.json.template`.
+If the Python pattern is present, replace it with the bash one-liner from `templates/hooks-settings.json.template`.
+
+If missing entirely, provide the hook JSON from `templates/hooks-settings.json.template`.
 
 ### .gitignore Coverage
 In the current project directory, check `.gitignore` for:
