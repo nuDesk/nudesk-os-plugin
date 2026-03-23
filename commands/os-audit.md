@@ -43,7 +43,7 @@ If missing, provide the `mkdir -p` command to create them.
 
 ### Installed Plugins
 Read `~/.claude/plugins/installed_plugins.json` and check:
-- [ ] `executive-os` plugin is installed
+- [ ] `nudesk-os` plugin is installed
 - [ ] Version matches the latest in `.claude-plugin/plugin.json` from the repo at `~/Projects/nudesk-os-plugin/`
 
 ### Recommended Plugins
