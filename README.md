@@ -31,6 +31,9 @@ An executive operating system for Claude Code. Turns Claude into a daily operato
 | **asana-agent** | Auto-triggered | "run my tasks", "check my Asana queue", "process today's tasks" |
 | **memory-management** | Auto-triggered | "remember this", "who is X", "what does X mean" |
 | **soc2-compliance** | Reference | SOC 2 Type II compliance controls for Claude Code workflows |
+| **srd-generator** | On-demand | Generates Solution Requirements Documents for AI agent consumption — "PRD", "requirements document", "build brief", "spec out", "technical requirements" |
+| **ai-solution-architect** | On-demand | Technical strategy partner for AI solution design and build vs. buy decisions — "help me design", "I need to build", "architecture review", "solution design" |
+| **nudesk-brand-styling** | Auto-triggered | Applies nuDesk brand colors, typography, and design standards to presentations, reports, and client-facing materials |
 
 ### Agents
 
@@ -55,7 +58,7 @@ Institutional knowledge docs bundled with the plugin — platform constraints, s
 |-----------|----------|
 | `references/platform-references/` | Verified patterns and anti-patterns for managed platforms (n8n Cloud, GCP Cloud Run, Google APIs, HubSpot, Apollo, Lovable) |
 | `references/security/` | Security review guide — safe commands, dangerous commands to avoid, incident response |
-| `references/mcp-setup/` | Step-by-step setup guides for Google Drive and Google Workspace MCP servers |
+| `references/mcp-setup/` | Setup guide for the `gws` CLI (Google Workspace via Bash) |
 | `references/brand-guides/` | Visual identity and brand voice rules for client-facing deliverables |
 
 ## Prerequisites
@@ -67,11 +70,23 @@ Executive OS works best with these MCP servers connected:
 | Server | Used For | Required? |
 |--------|----------|-----------|
 | **Asana** | Task management, agent queue, weekly reports | Yes |
-| **Google Workspace** | Gmail, Calendar | Recommended |
 | **Fireflies** | Meeting transcripts and action items | Optional |
 | **HubSpot** | CRM deals and tasks | Optional |
 
 Commands gracefully degrade when optional servers aren't available — they'll note what's missing and continue.
+
+### gws CLI (Google Workspace)
+
+Gmail, Calendar, Drive, Chat, Docs, Sheets, and Slides are accessed via the **`gws` CLI** — not an MCP server. Each user authenticates with their own Google account.
+
+Install:
+```bash
+brew install google/gws/gws
+npx skills add --yes --global https://github.com/googleworkspace/cli
+gws auth setup
+```
+
+See `references/mcp-setup/gws-cli-setup.md` for the full setup guide.
 
 ### Asana Custom Fields
 

@@ -127,7 +127,7 @@ For each of the next 4 weeks, calculate:
 
 Identify the best 2-3 deep work blocks in the next 2 weeks — these are half-day or full-day slots with minimal meetings, ideal for Tier 2 strategic work.
 
-**If auth is needed:** Present the authorization URL and note "Calendar data unavailable — Google Workspace MCP needs re-auth." Continue without this section.
+**If auth fails:** Note "Calendar data unavailable — run `gws auth login -s calendar` to re-auth." Continue without this section.
 
 ## Step 5: Pipeline Health (HubSpot)
 

@@ -62,12 +62,11 @@ EXECUTIVE OS SETUP — Configuration Scan
   Memory directories        — [Complete / Partial / Missing]
   Asana config              — [Complete / Partial / Missing]
   MCP: Asana                — [Configured / Not configured] (required)
-  MCP: Google Workspace     — [Configured / Not configured] (recommended)
-  MCP: Google Drive         — [Configured / Not configured] (optional)
+  gws CLI                   — [Authed / Not authed / Not installed] (recommended)
   MCP: Fireflies            — [Configured / Not configured] (optional)
   MCP: HubSpot              — [Configured / Not configured] (optional)
   Compliance hooks          — [Installed / Not installed]
-  Plugin: pr-review-toolkit — [Installed / Not installed] (recommended)
+  Plugin: pr-review-toolkit — [Installed / Not installed] (optional)
 ```
 
 Then call `AskUserQuestion`: "Proceed with all incomplete steps, or would you like to select specific steps?"
@@ -169,14 +168,68 @@ This step requires no user interaction unless all directories already exist. If 
 
 ### 3b. Google Workspace via `gws` CLI (Recommended)
 
-**If not installed:**
-- Note that it enables Gmail, Calendar, Chat, Drive, Docs, Sheets, Slides, and People access
-- Point to the setup guide: `~/Projects/executive-os-plugin/references/mcp-setup/gws-cli-setup.md`
-- Do not block on this
+The `gws` CLI provides access to Gmail, Calendar, Drive, Chat, Docs, Sheets, Slides, and People — all via Bash commands (not an MCP server). Each user authenticates with their own nuDesk Google account.
 
-**If installed:**
-- Smoke test: run `gws auth status` via Bash — check for `"token_valid": true`
-- Report success or auth failure
+#### 3b-i. Check if `gws` is installed
+
+```bash
+which gws
+```
+
+**If not found:** Provide these install steps and wait for the user to complete them before continuing:
+
+```bash
+brew install google/gws/gws
+npx skills add --yes --global https://github.com/googleworkspace/cli
+```
+
+Explain: "This installs the Google Workspace CLI and 42 Agent Skills that let Claude access your Gmail, Calendar, Drive, Chat, Docs, and Sheets."
+
+After the user confirms, proceed to 3b-ii.
+
+**If found:** Proceed directly to 3b-ii.
+
+#### 3b-ii. Check auth status
+
+```bash
+gws auth status
+```
+
+Parse the output:
+
+**If `token_valid` is not `true`:**
+- Instruct: "Run `gws auth setup` to authenticate with your nuDesk Google account. A browser window will open — sign in with your nuDesk email (@nudesk.ai)."
+- Call `AskUserQuestion`: "Run `gws auth setup` now and let me know when you've completed the browser sign-in."
+- **→ Your turn ends here.** After they confirm, run `gws auth status` again to verify.
+- If it still fails: point to `~/Projects/executive-os-plugin/references/mcp-setup/gws-cli-setup.md` for detailed troubleshooting.
+
+**If `token_valid` is `true`:** Proceed to 3b-iii.
+
+#### 3b-iii. Smoke test
+
+```bash
+gws gmail users messages list --params '{"userId":"me","maxResults":1}'
+```
+
+**If successful:** Show green status — "gws CLI: Connected and authenticated."
+
+**If failed:** Diagnose:
+- Wrong account: "Are you authenticated with your nuDesk email? Run `gws auth status` to check which account is active."
+- Missing Gmail scope: "Run `gws auth login -s gmail` to add Gmail access."
+- Other error: Reference `~/Projects/executive-os-plugin/references/mcp-setup/gws-cli-setup.md` troubleshooting section.
+
+#### 3b-iv. Scope check
+
+Run `gws auth status` and verify these scopes are present in the output:
+- `gmail.readonly` (or broader scope like `gmail.modify` or `gmail`)
+- `calendar.readonly` (or broader)
+- `drive.readonly` (or broader)
+
+**If any are missing:** Run:
+```bash
+gws auth login -s gmail,calendar,drive
+```
+Then verify again with `gws auth status`.
 
 ### 3c. Optional MCP Servers (Fireflies, HubSpot)
 
@@ -297,6 +350,7 @@ Call `AskUserQuestion`: "Here's your generated Asana config. Want me to write it
 **If not installed:**
 
 1. Read the hook template from `~/Projects/executive-os-plugin/templates/hooks-settings.json.template`.
+   This hook is defined by the **soc2-compliance** skill (`~/Projects/executive-os-plugin/skills/soc2-compliance/SKILL.md`) — it is a core SOC 2 Type II control for Claude Code workflows.
 2. Check if `~/.claude/settings.json` exists.
    - **If it exists:** Read it. Show the user what will be added (the PreToolUse hook). Merge the hook into the existing settings — preserve all other settings and hooks.
    - **If it does not exist:** Show the full settings.json content that will be created.
@@ -311,15 +365,15 @@ Call `AskUserQuestion`: "Here's your generated Asana config. Want me to write it
 
 ---
 
-## Step 6: Recommended Plugins
+## Step 6: Recommended Plugins and Skills
 
-**If pr-review-toolkit is installed:** Show status and skip to Step 7.
+**If pr-review-toolkit is installed:** Show status.
 
 **If not installed:**
 
 Inform the user:
 
-> **pr-review-toolkit** provides 6 specialized review agents (code-reviewer, pr-test-analyzer, silent-failure-hunter, code-simplifier, comment-analyzer, type-design-analyzer) and a `/pr-review-toolkit:review-pr` command for comprehensive PR reviews.
+> **pr-review-toolkit** provides 6 specialized review agents (code-reviewer, pr-test-analyzer, silent-failure-hunter, code-simplifier, comment-analyzer, type-design-analyzer) and a `/pr-review-toolkit:review-pr` command for comprehensive PR reviews. Optional — primarily useful for teams doing formal code review workflows.
 >
 > Install with:
 > ```
@@ -327,6 +381,32 @@ Inform the user:
 > ```
 
 This is informational only — do not auto-install. The user can run the command themselves if interested.
+
+### Recommended Skills
+
+The following skills are bundled with Executive OS and should already be installed at `~/.claude/skills/`. Check that these three are present:
+
+```bash
+ls ~/.claude/skills/srd-generator/SKILL.md
+ls ~/.claude/skills/ai-solution-architect/SKILL.md
+ls ~/.claude/skills/nudesk-brand-styling/SKILL.md
+```
+
+If any are missing, run from the plugin directory:
+```bash
+cd ~/Projects/executive-os-plugin/skills
+unzip -o srd-generator.skill -d ~/.claude/skills/
+unzip -o ai-solution-architect.skill -d ~/.claude/skills/
+unzip -o nudesk-brand-styling.skill -d ~/.claude/skills/
+```
+
+**Skill descriptions:**
+
+| Skill | Trigger | What it does |
+|-------|---------|--------------|
+| **srd-generator** | "PRD", "requirements document", "build brief", "spec out", "technical requirements" | Generates structured Solution Requirements Documents optimized for AI coding agents (Claude Code, Lovable, n8n) |
+| **ai-solution-architect** | "help me design", "I need to build", "architecture review", "solution design", "how should we build", "evaluate options for" | Technical strategy partner — explores architecture options, build vs. buy decisions, and designs AI-powered solutions |
+| **nudesk-brand-styling** | "nuDesk brand", "brand guidelines", "apply nuDesk styling", "make it on-brand", "nuDesk presentation", "nuDesk colors", "client-facing materials" | Applies nuDesk's official brand colors, typography, and design standards to any deliverable |
 
 Proceed to Step 7.
 

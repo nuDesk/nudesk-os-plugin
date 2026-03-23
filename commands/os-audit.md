@@ -53,12 +53,17 @@ Check if these optional but recommended plugins are installed:
 ### MCP Servers
 Check `~/.claude.json` and workspace `settings.json` for configured MCP servers:
 - [ ] **Asana** — Required
-- [ ] **Google Workspace** — Recommended (Gmail, Calendar)
-- [ ] **Google Drive** — Optional
 - [ ] **Fireflies** — Optional
 - [ ] **HubSpot** — Optional
 
-Note which are configured vs. missing.
+### gws CLI (Google Workspace)
+Run `gws auth status` via Bash — check for `"token_valid": true`. Google Workspace (Gmail, Calendar, Drive, Chat, Docs, Sheets) is accessed via the `gws` CLI, not an MCP server.
+
+Smoke test: `gws gmail users messages list --params '{"userId":"me","maxResults":1}'`
+
+Note which are configured vs. missing. Reference `~/Projects/executive-os-plugin/references/mcp-setup/gws-cli-setup.md` for setup instructions.
+
+Note: The **security-reviewer** agent is bundled at `~/Projects/executive-os-plugin/agents/security-reviewer.md` — it is available for security audits via the Agent tool and does not require MCP configuration.
 
 ## 3. Compliance Controls
 

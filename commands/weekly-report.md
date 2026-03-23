@@ -127,12 +127,16 @@ Keep this lightweight — only surface items needing CEO attention.
 **If HubSpot MCP is not available:** Note "HubSpot data unavailable" and continue.
 
 #### Google Calendar — Next Week's Committed Time
-Use Google Calendar MCP tools to list events for the upcoming Monday through Friday. Map committed time blocks and identify:
+Use the **`gws` CLI** via Bash. Run:
+```
+gws calendar events list --params '{"calendarId": "primary", "timeMin": "<next-monday>T00:00:00Z", "timeMax": "<next-friday>T23:59:59Z", "maxResults": 100, "singleEvents": true, "orderBy": "startTime"}'
+```
+Map committed time blocks and identify:
 - Meetings requiring prep
 - Days with heavy meeting load (limited deep-work capacity)
 - Open blocks available for strategic work
 
-**If Calendar MCP is not available:** Note "Calendar data unavailable" and continue.
+**If auth fails:** Note "Calendar data unavailable — run `gws auth login -s calendar` to re-auth." and continue.
 
 #### Gmail — Important Unread/Unanswered
 Use the **`gws` CLI** via Bash. Run:

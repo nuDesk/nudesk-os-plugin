@@ -1,114 +1,119 @@
-# Google Workspace CLI (`gws`) Setup for Claude Code
+# gws CLI Setup Guide
 
-**Purpose:** Access Gmail, Calendar, Chat, Drive, Docs, Sheets, Slides, People, Tasks, Forms, Meet, and Admin from Claude Code via the official `@googleworkspace/cli` tool.
+**Purpose:** Access Gmail, Calendar, Drive, Chat, Docs, Sheets, Slides, and People from Claude Code via the official Google Workspace CLI.
 
-**Package:** `@googleworkspace/cli` (npm)
-**Auth:** OAuth2 via browser, tokens encrypted in macOS Keychain
-**Access method:** Bash tool (not MCP — Google removed MCP mode due to context window overflow from their large API surface)
+**Access method:** Bash tool — `gws` runs as a CLI command, not an MCP server.
 
-## Prerequisites
+---
 
-- Node.js 18+
-- A GCP project with Workspace APIs enabled
-- An OAuth 2.0 client ID (Desktop type) in that GCP project
-- `gcloud` CLI installed and authenticated
+## 1. Prerequisites
 
-## Step 1: Install
+Homebrew must be installed on macOS:
 
 ```bash
-npm install -g @googleworkspace/cli
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-## Step 2: Auth Setup
+Verify: `brew --version`
 
-This configures the GCP project and OAuth client:
+---
+
+## 2. Install gws CLI
 
 ```bash
-gws auth setup --client-id="YOUR_CLIENT_ID" --client-secret="YOUR_CLIENT_SECRET"
+brew install google/gws/gws
 ```
 
-If running the interactive wizard instead, you'll need:
-- Your GCP project ID (e.g., `nudesk-agent-builder`, NOT the project number)
-- Select which Workspace APIs to enable (recommended: all core services)
+Verify: `gws --version`
 
-## Step 3: Login
+---
 
-Authenticate with full scopes for all services:
+## 3. Install Agent Skills
+
+This installs 42 Claude Agent Skills that wrap `gws` commands for use in Claude Code sessions:
 
 ```bash
-gws auth login -s drive,gmail,calendar,sheets,docs,slides,chat,people
+npx skills add --yes --global https://github.com/googleworkspace/cli
 ```
 
-This opens a browser for OAuth consent. Select **Full Access (All Scopes)** if your consent screen is set to Internal (Workspace org only).
+These skills cover Gmail, Calendar, Drive, Chat, Docs, Sheets, Slides, Meet, Forms, Keep, Tasks, People, Classroom, and Admin.
 
-## Step 4: Verify
+---
+
+## 4. Authenticate
+
+Run the auth wizard — it opens a browser for OAuth consent:
+
+```bash
+gws auth setup
+```
+
+Sign in with your **nuDesk Google account** (`@nudesk.ai`). Select **Full Access (All Scopes)** when prompted on the consent screen.
+
+---
+
+## 5. Verify
 
 ```bash
 gws auth status
 ```
 
-Confirm: `"token_valid": true`, `"auth_method": "oauth2"`, `"storage": "encrypted"`.
+Confirm these values in the output:
+- `token_valid: true`
+- `auth_method: oauth2`
+- Account email matches your nuDesk address
 
-Quick functional test:
+Quick smoke test:
 
 ```bash
 gws gmail users messages list --params '{"userId": "me", "maxResults": 1}'
 ```
 
-## Usage in Claude Code
+---
 
-`gws` is accessed via the Bash tool, not as an MCP server. Usage pattern:
+## 6. Scope Reference
+
+| Scope | Capability |
+|-------|------------|
+| `gmail` | Read, send, label, and manage Gmail messages |
+| `calendar` | Read and write Google Calendar events |
+| `drive` | Read and write Google Drive files and folders |
+| `chat` | Send and read Google Chat messages and spaces |
+| `docs` | Read and write Google Docs |
+| `sheets` | Read and write Google Sheets |
+| `slides` | Read and write Google Slides |
+| `people` | Read contacts and directory |
+
+To add missing scopes:
 
 ```bash
-gws <service> <resource> <method> --params '{"key": "value"}' --json '{"body": "data"}'
+gws auth login -s gmail,calendar,drive,chat,docs,sheets,slides,people
 ```
 
-### Common Commands
+---
 
-```bash
-# Gmail — list messages
-gws gmail users messages list --params '{"userId": "me", "q": "is:unread newer_than:1d", "maxResults": 10}'
-
-# Gmail — read a message
-gws gmail users messages get --params '{"userId": "me", "id": "<messageId>"}'
-
-# Calendar — today's events
-gws calendar events list --params '{"calendarId": "primary", "timeMin": "2026-03-16T00:00:00Z", "timeMax": "2026-03-16T23:59:59Z", "singleEvents": true, "orderBy": "startTime"}'
-
-# Drive — list files
-gws drive files list --params '{"pageSize": 10}'
-
-# Chat — send a message
-gws chat spaces messages create --params '{"parent": "spaces/<spaceId>"}' --json '{"text": "Hello"}'
-
-# People — lookup a contact
-gws people people get --params '{"resourceName": "people/<id>", "personFields": "names,emailAddresses"}'
-```
-
-### Shell Escaping
-
-- Use `\u0021` for `!` in JSON strings (bash interprets `!` as history expansion)
-- Use single quotes for `--params` and `--json` values
-- For apostrophes in text, close and reopen the single quote: `'it'\''s working'`
-
-## Troubleshooting
+## 7. Troubleshooting
 
 | Issue | Fix |
 |-------|-----|
-| `auth_method: none` | Run `gws auth login` |
-| Token expired | Run `gws auth login` again (refresh token handles most cases automatically) |
-| API not enabled | Run `gws auth setup` and enable the missing API |
-| `validationError` on service | Check `gws --help` for valid service names |
+| `which gws` returns nothing | Run `brew install google/gws/gws` |
+| `token_valid: false` | Run `gws auth login` |
+| Wrong Google account authenticated | Run `gws auth setup` and sign in with your `@nudesk.ai` account |
+| Token expired | Run `gws auth login` (refresh token auto-handles most cases) |
+| Missing scope (403 error) | Run `gws auth login -s <scope>` for the missing service |
+| `validationError` on service name | Run `gws --help` for valid service names |
+| Scopes not showing in `gws auth status` | Run `gws auth login -s gmail,calendar,drive` to re-grant |
 
-## Security Notes
+---
 
-- Credentials encrypted at rest, stored in macOS Keychain (`~/.config/gws/credentials.enc`)
-- No plain-text credential files on disk (unlike legacy community MCPs)
-- OAuth consent screen should be set to **Internal** (Workspace org only)
-- Replaces legacy `workspace-mcp` (PyPI) and `@piotr-agier/google-drive-mcp` (npm) community MCPs
+## 8. SOC 2 Note
 
-## Superseded Setup Guides
+OAuth tokens are stored locally in macOS Keychain (`~/.config/gws/credentials.enc`) — encrypted at rest, never shared. Each team member authenticates as themselves using their own nuDesk Google account. No shared service account credentials. This satisfies nuDesk's SOC 2 access control requirement: **OAuth for user-context operations with user consent.**
 
-The following guides are deprecated and retained only for reference:
+---
+
+## Superseded Guides
+
+The following guides are deprecated — retained for reference only:
 - `google-workspace-mcp-setup.md` — replaced by this guide
 - `google-drive-mcp-setup.md` — replaced by this guide
