@@ -1,14 +1,14 @@
 {
-  "name": "nudesk-executive-os",
-  "description": "nuDesk Executive OS plugin marketplace — executive operating system for Claude Code",
+  "name": "nudesk-os",
+  "description": "nuDesk OS plugin marketplace \u2014 AI operating system for nuDesk LLC",
   "owner": {
     "name": "nuDesk LLC",
     "email": "kenny@nudesk.ai"
   },
   "plugins": [
     {
-      "name": "executive-os",
-      "description": "Executive operating system for Claude Code. Daily planning, strategic reviews, task execution, weekly reporting, and session management powered by Asana, Google Workspace, Fireflies, and HubSpot.",
+      "name": "nudesk-os",
+      "description": "nuDesk OS for Claude Code. Daily planning, strategic reviews, task execution, weekly reporting, and session management powered by Asana, Google Workspace, Fireflies, and HubSpot.",
       "version": "3.0.0",
       "author": {
         "name": "nuDesk LLC",

@@ -1,6 +1,6 @@
 # Memory Directory Setup
 
-Executive OS uses a two-tier memory system. Create this directory structure under `~/.claude/`:
+nuDesk OS uses a two-tier memory system. Create this directory structure under `~/.claude/`:
 
 ```
 ~/.claude/

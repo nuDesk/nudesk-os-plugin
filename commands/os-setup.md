@@ -1,9 +1,9 @@
 ---
-description: Guided setup wizard for Executive OS — configure CLAUDE.md, Asana, memory, hooks, and MCP servers
+description: Guided setup wizard for nuDesk OS — configure CLAUDE.md, Asana, memory, hooks, and MCP servers
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob, mcp__plugin_asana_asana__asana_list_workspaces, mcp__plugin_asana_asana__asana_get_user, mcp__plugin_asana_asana__asana_get_teams_for_workspace, mcp__plugin_asana_asana__asana_get_projects_for_team, mcp__plugin_asana_asana__asana_get_project, mcp__plugin_asana_asana__asana_search_tasks, mcp__plugin_asana_asana__asana_get_task
 ---
 
-Guided, interactive setup for Executive OS. Detects what's already configured, walks through what's missing, and auto-discovers Asana GIDs via MCP.
+Guided, interactive setup for nuDesk OS. Detects what's already configured, walks through what's missing, and auto-discovers Asana GIDs via MCP.
 
 Safe to run multiple times — every step checks existing state first and skips what's already done.
 
@@ -81,7 +81,7 @@ Then call `AskUserQuestion`: "Proceed with all incomplete steps, or would you li
 
 **If Missing or Partial:**
 
-1. Read the template from `~/Projects/executive-os-plugin/templates/CLAUDE.md.template`.
+1. Read the template from `~/Projects/nudesk-os-plugin/templates/CLAUDE.md.template`.
 
 2. Call `AskUserQuestion` with:
 
@@ -135,7 +135,7 @@ Then call `AskUserQuestion`: "Proceed with all incomplete steps, or would you li
    ```bash
    mkdir -p ~/.claude/memory/people ~/.claude/memory/projects ~/.claude/memory/context
    ```
-3. Read `~/Projects/executive-os-plugin/templates/memory-scaffold.md` and create a starter `~/.claude/memory/glossary.md` with the glossary template:
+3. Read `~/Projects/nudesk-os-plugin/templates/memory-scaffold.md` and create a starter `~/.claude/memory/glossary.md` with the glossary template:
    ```markdown
    # Glossary
 
@@ -153,11 +153,11 @@ This step requires no user interaction unless all directories already exist. If 
 ### 3a. Asana (Required)
 
 **If not configured:**
-- Tell the user Asana MCP is required for Executive OS and provide the install command:
+- Tell the user Asana MCP is required for nuDesk OS and provide the install command:
   ```
   claude mcp add asana -- npx -y @anthropic/asana-mcp-server
   ```
-- Explain they'll need to re-run `/executive-os:os-setup` after installing.
+- Explain they'll need to re-run `/nudesk-os:os-setup` after installing.
 - Call `AskUserQuestion`: "Asana MCP is not configured. Would you like to install it now, or skip and come back later?"
 - **→ Your turn ends here.**
 
@@ -201,7 +201,7 @@ Parse the output:
 - Instruct: "Run `gws auth setup` to authenticate with your nuDesk Google account. A browser window will open — sign in with your nuDesk email (@nudesk.ai)."
 - Call `AskUserQuestion`: "Run `gws auth setup` now and let me know when you've completed the browser sign-in."
 - **→ Your turn ends here.** After they confirm, run `gws auth status` again to verify.
-- If it still fails: point to `~/Projects/executive-os-plugin/references/setup/gws-cli-setup.md` for detailed troubleshooting.
+- If it still fails: point to `~/Projects/nudesk-os-plugin/references/setup/gws-cli-setup.md` for detailed troubleshooting.
 
 **If `token_valid` is `true`:** Proceed to 3b-iii.
 
@@ -216,7 +216,7 @@ gws gmail users messages list --params '{"userId":"me","maxResults":1}'
 **If failed:** Diagnose:
 - Wrong account: "Are you authenticated with your nuDesk email? Run `gws auth status` to check which account is active."
 - Missing Gmail scope: "Run `gws auth login -s gmail` to add Gmail access."
-- Other error: Reference `~/Projects/executive-os-plugin/references/setup/gws-cli-setup.md` troubleshooting section.
+- Other error: Reference `~/Projects/nudesk-os-plugin/references/setup/gws-cli-setup.md` troubleshooting section.
 
 #### 3b-iv. Scope check
 
@@ -319,7 +319,7 @@ Call `AskUserQuestion`: "Here are the custom fields I discovered. Do these look 
 
 ### Sub-step 4d: Generate and Confirm
 
-1. Read the template from `~/Projects/executive-os-plugin/templates/asana-config.md.template`.
+1. Read the template from `~/Projects/nudesk-os-plugin/templates/asana-config.md.template`.
 2. Assemble the complete `asana-config.md` by filling in all discovered values:
    - Workspace name and GID
    - User name and GID
@@ -349,8 +349,8 @@ Call `AskUserQuestion`: "Here's your generated Asana config. Want me to write it
 
 **If not installed:**
 
-1. Read the hook template from `~/Projects/executive-os-plugin/templates/hooks-settings.json.template`.
-   This hook is defined by the **soc2-compliance** skill (`~/Projects/executive-os-plugin/skills/soc2-compliance/SKILL.md`) — it is a core SOC 2 Type II control for Claude Code workflows.
+1. Read the hook template from `~/Projects/nudesk-os-plugin/templates/hooks-settings.json.template`.
+   This hook is defined by the **soc2-compliance** skill (`~/Projects/nudesk-os-plugin/skills/soc2-compliance/SKILL.md`) — it is a core SOC 2 Type II control for Claude Code workflows.
 2. Check if `~/.claude/settings.json` exists.
    - **If it exists:** Read it. Show the user what will be added (the PreToolUse hook). Merge the hook into the existing settings — preserve all other settings and hooks.
    - **If it does not exist:** Show the full settings.json content that will be created.
@@ -384,7 +384,7 @@ This is informational only — do not auto-install. The user can run the command
 
 ### Recommended Skills
 
-The following skills are bundled with Executive OS and should already be installed at `~/.claude/skills/`. Check that these three are present:
+The following skills are bundled with nuDesk OS and should already be installed at `~/.claude/skills/`. Check that these three are present:
 
 ```bash
 ls ~/.claude/skills/srd-generator/SKILL.md
@@ -394,7 +394,7 @@ ls ~/.claude/skills/nudesk-brand-styling/SKILL.md
 
 If any are missing, run from the plugin directory:
 ```bash
-cd ~/Projects/executive-os-plugin/skills/bundles
+cd ~/Projects/nudesk-os-plugin/skills/bundles
 unzip -o srd-generator.skill -d ~/.claude/skills/
 unzip -o ai-solution-architect.skill -d ~/.claude/skills/
 unzip -o nudesk-brand-styling.skill -d ~/.claude/skills/
@@ -428,9 +428,9 @@ OPTIONAL (not configured)
 - ...
 
 NEXT STEPS
-1. Run /executive-os:daily-plan to test your full setup end-to-end
+1. Run /nudesk-os:daily-plan to test your full setup end-to-end
 2. Fill in Strategic Goals, Priorities, and Working Memory in ~/.claude/CLAUDE.md as you work
-3. Memory will grow automatically via /executive-os:session-closeout
+3. Memory will grow automatically via /nudesk-os:session-closeout
 ```
 
 Done.

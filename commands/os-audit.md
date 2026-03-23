@@ -1,9 +1,9 @@
 ---
-description: Audit Executive OS installation — check config, skills, plugins, and propose updates
+description: Audit nuDesk OS installation — check config, skills, plugins, and propose updates
 allowed-tools: Read, Grep, Glob, Bash
 ---
 
-Scan the Executive OS installation and produce a health report with actionable recommendations.
+Scan the nuDesk OS installation and produce a health report with actionable recommendations.
 
 ## 1. Configuration Health
 
@@ -44,7 +44,7 @@ If missing, provide the `mkdir -p` command to create them.
 ### Installed Plugins
 Read `~/.claude/plugins/installed_plugins.json` and check:
 - [ ] `executive-os` plugin is installed
-- [ ] Version matches the latest in `.claude-plugin/plugin.json` from the repo at `~/Projects/executive-os-plugin/`
+- [ ] Version matches the latest in `.claude-plugin/plugin.json` from the repo at `~/Projects/nudesk-os-plugin/`
 
 ### Recommended Plugins
 Check if these optional but recommended plugins are installed:
@@ -60,7 +60,7 @@ Run: `ls ~/.claude/skills/srd-generator/SKILL.md ~/.claude/skills/ai-solution-ar
 
 If any are missing, reinstall from the plugin:
 ```bash
-cd ~/Projects/executive-os-plugin/skills/bundles
+cd ~/Projects/nudesk-os-plugin/skills/bundles
 unzip -o srd-generator.skill -d ~/.claude/skills/
 unzip -o ai-solution-architect.skill -d ~/.claude/skills/
 unzip -o nudesk-brand-styling.skill -d ~/.claude/skills/
@@ -77,9 +77,9 @@ Run `gws auth status` via Bash — check for `"token_valid": true`. Google Works
 
 Smoke test: `gws gmail users messages list --params '{"userId":"me","maxResults":1}'`
 
-Note which are configured vs. missing. Reference `~/Projects/executive-os-plugin/references/setup/gws-cli-setup.md` for setup instructions.
+Note which are configured vs. missing. Reference `~/Projects/nudesk-os-plugin/references/setup/gws-cli-setup.md` for setup instructions.
 
-Note: The **security-reviewer** agent is bundled at `~/Projects/executive-os-plugin/agents/security-reviewer.md` — it is available for security audits via the Agent tool and does not require MCP configuration.
+Note: The **security-reviewer** agent is bundled at `~/Projects/nudesk-os-plugin/agents/security-reviewer.md` — it is available for security audits via the Agent tool and does not require MCP configuration.
 
 ## 3. Compliance Controls
 
@@ -105,7 +105,7 @@ Reference the SOC 2 compliance skill for the full checklist.
 
 ## 4. Platform References
 
-Check `~/Projects/executive-os-plugin/references/platform-references/` exists and list what's present:
+Check `~/Projects/nudesk-os-plugin/references/platform-references/` exists and list what's present:
 
 **Expected docs:**
 | Platform | File | Status |
@@ -121,8 +121,8 @@ Flag any platforms referenced in CLAUDE.md "My Stack" section that don't have a 
 
 ## 5. File Organization
 
-- [ ] Plugin repo cloned at `~/Projects/executive-os-plugin/`
-- [ ] `~/Projects/executive-os-plugin/references/` exists with expected subdirectories
+- [ ] Plugin repo cloned at `~/Projects/nudesk-os-plugin/`
+- [ ] `~/Projects/nudesk-os-plugin/references/` exists with expected subdirectories
 - [ ] No orphaned config files (e.g., old `.claude/commands/` files that duplicate plugin commands)
 
 ## Output
