@@ -349,21 +349,31 @@ The report is written for Sean as co-founder — not as an internal status updat
 
 After user approves the draft:
 
-1. **Create a new Asana task** using `asana_create_task`:
-   - `name`: `KKS Weekly Milestones & Report — Week of [Start Date]`
-   - `project_id`: `1211894375322111` (Executive Management)
-   - `assignee`: `me`
-   - `due_on`: next Monday from today (ISO 8601, YYYY-MM-DD)
+1. **Create a new Asana task** using `mcp__claude_ai_Asana__create_task_confirm`:
+   - `widget_id`: `model-generated-widget-id`
+   - `workspace`: `1211894317926172`
+   - `taskName`: `KKS Weekly Milestones & Report — Week of [Start Date]`
+   - `isComplete`: `false`
+   - `startDate`: start of reporting period (YYYY-MM-DD)
+   - `dueDate`: next Monday from today (YYYY-MM-DD)
+   - `assignee`: `{"gid": "1211894317926159", "name": "Kenny Salas", "email": "kenny@nudesk.ai"}`
+   - `description`: `Weekly executive progress report for the period [Start Date] - [End Date].`
+
+2. **Set custom fields** using `asana_update_task` on the newly created task GID:
    - `custom_fields` (JSON string):
      - Task Progress = In Progress: `{"1211903626313619": "1211903626313621"}`
      - Type = Reporting: `{"1211907135805437": "1211907135805442"}`
      - Priority = High: `{"1211907466745700": "1211907466745701"}`
 
-2. **Post the report as a comment** using `asana_create_task_story` on the newly created task:
+3. **Post the report as a comment** using `asana_create_task_story` on the newly created task:
    - Full report text
    - End with a mention of Sean Salas (GID: `1211913018942721`)
 
-3. Confirm: "Report posted to Asana. Task created — In Progress, due [next Monday date]."
+4. **Remind the user to add the task to the Executive Management project** in Asana:
+   - Note: current MCP tools cannot programmatically assign a task to a project after creation
+   - Say: "One manual step — please add this task to the **Executive Management** project in Asana (the task is currently in My Tasks only)."
+
+5. Confirm: "Report posted to Asana. Task created — In Progress, due [next Monday date]."
 
 ## Step 10: Update CLAUDE.md Priorities
 
