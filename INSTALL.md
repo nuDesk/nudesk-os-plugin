@@ -8,57 +8,90 @@ Complete setup for a new nuDesk team member. Takes about 10-15 minutes.
 
 ### macOS
 
-Confirm all three are installed:
+**1. Install Homebrew**
 
-```bash
-brew --version    # Should return a version number
-claude --version  # Should return a version number
-gcloud --version  # Should return a version number
-```
-
-**If Homebrew is not installed:**
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-**If Claude Code CLI is not installed:**
+Verify:
+```bash
+brew --version
+```
+
+---
+
+**2. Install Claude Code CLI**
+
 ```bash
 npm install -g @anthropic-ai/claude-code
 ```
 
-**If Google Cloud SDK (`gcloud`) is not installed:**
+Verify:
+```bash
+claude --version
+```
+
+---
+
+**3. Install Google Cloud SDK**
+
 ```bash
 brew install --cask google-cloud-sdk
+```
+
+Verify:
+```bash
+gcloud --version
 ```
 
 ---
 
 ### Windows
 
-Open **PowerShell as Administrator** and confirm all three are installed:
+Open **PowerShell as Administrator** for all steps below.
 
-```powershell
-node --version    # Should return a version number
-claude --version  # Should return a version number
-gcloud --version  # Should return a version number
-```
+**1. Install Node.js** (required for Claude Code)
 
-**If Node.js is not installed** (required for Claude Code):
 ```powershell
 winget install OpenJS.NodeJS
 ```
-Close and reopen PowerShell after installing.
 
-**If Claude Code CLI is not installed:**
+Close and reopen PowerShell, then verify:
+```powershell
+node --version
+```
+
+---
+
+**2. Install Claude Code CLI**
+
 ```powershell
 npm install -g @anthropic-ai/claude-code
 ```
 
-**If Google Cloud SDK (`gcloud`) is not installed:**
+Verify:
+```powershell
+claude --version
+```
+
+---
+
+**3. Install Google Cloud SDK**
+
 ```powershell
 winget install Google.CloudSDK
 ```
-Close and reopen PowerShell after installing, then run `gcloud init` to complete setup.
+
+Close and reopen PowerShell, then run the setup wizard:
+```powershell
+gcloud init
+```
+
+Verify:
+```powershell
+gcloud --version
+```
 
 ---
 
