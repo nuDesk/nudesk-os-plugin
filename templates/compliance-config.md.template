@@ -1,0 +1,77 @@
+# Compliance Configuration
+
+> Placed at `~/.claude/memory/compliance-config.md` during `/os-setup`.
+> Tracks Vanta (primary compliance platform) and Asana (operational execution layer).
+
+## Vanta
+
+| Key | Value |
+|-----|-------|
+| Plan | [basic / core / enterprise] |
+| API Access | [yes / no / not verified] |
+| OAuth Client ID | [vanta-client-id or N/A] |
+| MCP Server | [configured / not available on plan] |
+
+## Asana Compliance Projects
+
+| Project | GID | Purpose | Controls |
+|---------|-----|---------|----------|
+| Production Change Log | [gid] | Track all prod changes (OS-01, CC8.1) | OS-01, OS-02, SD-01 |
+| Incident Response Log | [gid] | Security incident tracking | IR-01 through IR-05 |
+| Risk Register | [gid] | Active risks and treatment plans | RM-01, RM-02, RM-03 |
+
+## Vanta-Managed Workflows (reference only — not queried from Asana)
+
+| Workflow | Platform | Controls |
+|----------|----------|----------|
+| Access Reviews | Vanta | AC-09, AC-10 |
+| Vendor Assessments | Vanta | TP-01 through TP-05 |
+| Policy Acknowledgments | Vanta | HR-02, HR-03, AI-08 |
+| Onboarding/Offboarding | Vanta + Asana | AC-06, AC-07, AC-10, HR-05 |
+
+## Asana Custom Fields (Compliance)
+
+| Field | GID | Type | Used In |
+|-------|-----|------|---------|
+| Control ID | [gid] | text | All compliance projects |
+| Change Type | [gid] | enum: Feature / Bugfix / Hotfix / Config / Infrastructure | Production Change Log |
+| Severity | [gid] | enum: P0 / P1 / P2 / P3 | Incident Response Log |
+| Risk Level | [gid] | enum: Critical / High / Medium / Low | Risk Register |
+
+## Change Log Subtask Template
+
+Each Production Change Log task should include these subtasks:
+
+- [ ] Code reviewed / PR approved (SD-01)
+- [ ] Tested in staging (OS-03)
+- [ ] No confidential data in test environment (OS-04)
+- [ ] Security check passed (SD-04)
+- [ ] Approved for deployment (OS-01)
+- [ ] Deployed — revision ID recorded
+- [ ] Post-deploy verification passed
+
+## Incident Response Subtask Template
+
+Each incident task should include these 6-phase subtasks:
+
+- [ ] Phase 1: Report — incident reported, initial details captured
+- [ ] Phase 2: Triage — severity classified, escalation path determined
+- [ ] Phase 3: Investigate — root cause analysis underway
+- [ ] Phase 4: Contain — immediate containment actions taken
+- [ ] Phase 5: Recover — systems restored to normal operation
+- [ ] Phase 6: Harden — preventive measures implemented, lessons documented
+
+## Scheduled Reviews
+
+| Review | Frequency | Next Due | Controls | System |
+|--------|-----------|----------|----------|--------|
+| Quarterly Access Review | Quarterly | [date] | AC-09 | Vanta |
+| Quarterly Vuln Scan | Quarterly | [date] | OS-08 | Vanta |
+| Quarterly AI Policy Review | Quarterly | [date] | AI-07 | Vanta |
+| Annual Risk Assessment | Annual | [date] | RM-01-03 | Asana (Risk Register) |
+| Annual DR Test | Annual | [date] | BC-01 | Vanta |
+| Annual Vendor Review | Annual | [date] | TP-03, TP-04 | Vanta |
+| Annual Network Assessment | Annual | [date] | OS-14 | Vanta |
+| Annual Data Retention Review | Annual | [date] | DM-05 | Vanta |
+| Annual Security Training | Annual | [date] | HR-03, SD-06 | Vanta |
+| Monthly Change Log Audit | Monthly | [date] | OS-01 | Asana (Change Log) |

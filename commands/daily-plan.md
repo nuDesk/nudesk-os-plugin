@@ -76,6 +76,22 @@ Use HubSpot MCP tools filtered to the user's HubSpot owner ID (from CLAUDE.md). 
 
 Keep this lightweight — only surface items needing attention.
 
+### Compliance Quick Check
+
+After pulling all data sources, run a lightweight compliance check (2-3 Asana queries max).
+
+Load `~/.claude/memory/compliance-config.md`. If it exists with real GIDs:
+
+1. **Scheduled reviews due within 7 days?** Read the Scheduled Reviews table and compare dates to today.
+2. **Incomplete production change records?** `asana_search_tasks` against Production Change Log — count tasks with `completed` = false (open changes without completed checklists).
+3. **Open incidents?** `asana_search_tasks` against Incident Response Log — count/severity of open incidents.
+
+Include findings in the daily plan output under a "COMPLIANCE" section (see Step 4).
+
+If compliance-config.md is not configured: skip this check entirely. Do not mention it.
+
+---
+
 ## Step 3: Synthesize and Rank
 
 Apply the 4-tier prioritization framework below. Cross-reference all sources against CLAUDE.md priorities.
@@ -151,6 +167,11 @@ UNCAPTURED COMMITMENTS (from meetings — no Asana task found)
 
 AGENT QUEUE (automatable)
 - [Tasks that can be run via /run-tasks]
+
+COMPLIANCE (if applicable)
+- Reviews due within 7 days: [list or "None"]
+- Incomplete change records: [N]
+- Open incidents: [count by severity or "None"]
 
 WATCH LIST (not urgent but track)
 - [Items to keep on radar]

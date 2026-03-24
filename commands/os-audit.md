@@ -1,6 +1,6 @@
 ---
 description: Audit nuDesk OS installation — check config, skills, plugins, and propose updates
-allowed-tools: Read, Grep, Glob, Bash
+allowed-tools: Read, Grep, Glob, Bash, mcp__plugin_asana_asana__asana_search_tasks, mcp__plugin_asana_asana__asana_get_task, mcp__plugin_asana_asana__asana_get_project
 ---
 
 Scan the nuDesk OS installation and produce a health report with actionable recommendations.
@@ -83,8 +83,41 @@ Note: The **security-reviewer** agent is bundled at `~/Projects/nudesk-os-plugin
 
 ## 3. Compliance Controls
 
-### .env Blocker Hook
-Read `~/.claude/settings.json`:
+### 3a. Compliance Config Health
+
+Check if `~/.claude/memory/compliance-config.md` exists and validate:
+
+- [ ] File exists
+- [ ] Vanta section has real values (not placeholders like `[basic / core / enterprise]`)
+- [ ] Asana Compliance Projects have real GIDs (Production Change Log, Incident Response Log, Risk Register)
+- [ ] Asana Custom Fields (Compliance) have real GIDs (Control ID, Change Type, Severity, Risk Level)
+- [ ] Scheduled Reviews have real dates (not `[date]`)
+- [ ] Any scheduled reviews past due? (compare "Next Due" dates to today)
+
+If the file is missing, provide:
+```
+Run /nudesk-os:os-setup to generate compliance-config.md
+```
+
+### 3b. Production Change Log Health
+
+If the Production Change Log GID is populated in compliance-config.md:
+- Use `asana_search_tasks` to find recent tasks in that project (last 30 days)
+- Check for tasks without completed subtask checklists (change management checklist incomplete)
+- Flag any tasks missing the Control ID custom field
+- Report: "X changes logged in last 30 days, Y with incomplete checklists"
+
+If the GID is a placeholder: flag as "Production Change Log not configured"
+
+### 3c. Vanta Status
+
+Read Vanta section from compliance-config.md:
+- Report plan tier and API access status
+- If API access is "yes": note that vanta-bridge skill can sync data
+- If API access is "no" or "not verified": note that compliance reporting operates in export mode (manual upload to Vanta)
+
+### 3d. .env Blocker Hook
+Read the workspace `settings.json` (check both `~/.claude/settings.json` and the project-level `.claude/settings.json`):
 - [ ] PreToolUse hook exists with `Edit|Write` matcher
 - [ ] Hook blocks `.env` file edits (but allows `.env.example`)
 - [ ] Hook uses the **bash pattern** (correct): `file="$CLAUDE_FILE_PATH"; if [[ "$file" == *.env ...`

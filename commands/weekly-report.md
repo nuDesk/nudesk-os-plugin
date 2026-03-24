@@ -241,7 +241,50 @@ Task                     | Current Due | Suggested Due | Reason
 
 5. Execute approved changes via `asana_update_task` (set `due_on`). Confirm each change.
 
-**STOP — wait for user response before proceeding to Step 8.**
+**STOP — wait for user response before proceeding to Step 7e.**
+
+### Step 7e: Compliance Pulse
+
+After synthesizing priorities, gather a lightweight compliance snapshot for the report.
+
+#### Query Asana Compliance Data
+
+Load `~/.claude/memory/compliance-config.md`. If it exists with real GIDs:
+
+1. **Production Change Log:** `asana_search_tasks` — count tasks completed this reporting period, count tasks with incomplete checklists
+2. **Incident Response Log:** `asana_search_tasks` — count open incidents by severity
+3. **Risk Register:** `asana_search_tasks` — count active risks by level
+
+#### Check Scheduled Reviews
+
+Read the Scheduled Reviews table from compliance-config.md:
+- Flag reviews due within the next 14 days
+- Flag overdue reviews
+
+#### Vanta Status (if API available)
+
+If Vanta API access is confirmed:
+- Query overall control pass percentage
+- Note any failing tests
+
+If Vanta is UI-only: note "Check Vanta dashboard for control test status"
+
+#### Include in Report
+
+Add a "Compliance Pulse" section to the report draft:
+
+```
+COMPLIANCE PULSE
+  Production changes logged:   [N] (this period)
+  Incomplete checklists:       [N]
+  Open incidents:              [N] (P0: [N], P1: [N])
+  Active risks:                [N] (Critical: [N], High: [N])
+  Reviews due (14 days):       [list or "None"]
+  Overdue reviews:             [list or "None"]
+  Vanta controls passing:      [N]% (or "Check Vanta dashboard")
+```
+
+If compliance-config.md is not configured: skip this section entirely.
 
 ---
 

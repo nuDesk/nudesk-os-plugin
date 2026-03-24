@@ -46,6 +46,7 @@ Read, Edit, Write, Glob, Grep, Search, WebFetch, WebSearch, Bash(*)
 | **Gamma** | All 4 tools (presentations, status, themes, folders) | Deck generation for client deliverables |
 | **Context7** | Both tools (resolve-library-id, get-library-docs) | Live documentation lookup during development |
 | **Playwright** | browser_take_screenshot, browser_click, browser_type, browser_evaluate, browser_fill_form, browser_wait_for, browser_run_code | Browser automation for UI testing, design review, and debugging |
+| **Vanta** (conditional) | All MCP tools if Core+ plan: vanta_list_frameworks, vanta_get_controls, vanta_get_tests, vanta_get_vulnerabilities, vanta_get_evidence, vanta_get_people | Compliance dashboard, control status, evidence tracking (read-only via MCP; writes via REST API) |
 
 ### Global Deny List — Hard Guardrails
 
@@ -87,7 +88,7 @@ Read(.env), Read(.env.*), Read(**/.env), Read(**/.env.*)   # Block .env reads
 Bash(rm *), Bash(rm -*), Bash(sudo *), Bash(rmdir *)       # Block destructive ops
 ```
 
-### Pattern: Workflow/Automation Project (n8n definitions, executive-os-plugin)
+### Pattern: Workflow/Automation Project (n8n definitions, nudesk-os-plugin)
 
 Minimal permissions — typically just:
 - Asana MCP tools needed for that project's scope
@@ -128,7 +129,7 @@ These rules apply to **all** permission configurations:
 | **Prime Nexus/AI_SDR_Campaigns** | HubSpot (6), Drive (6), n8n (2), Asana (1) | Broad bash | + rm, sudo, unlink, shred | Medium |
 | **MDF/mdf-notice-agent** | n8n (7) | GCP deploy + LibreOffice | Standard | Medium |
 | **MDF/mdf-investor-statement-agent** | n8n (9), Drive (1), Asana (2) | GCP deploy + node | Standard | Medium |
-| **executive-os-plugin** | Asana (2) | Global only | Global only | Low |
+| **nudesk-os-plugin** | Asana (2) | Global only | Global only | Low |
 | **swing_local** | Figma (1) | Global only | Global only | Low |
 | **SS_LinkedIn** | Asana (1) | Global only | Global only | Low |
 

@@ -125,12 +125,54 @@ Check if there are learnings worth persisting:
 
 If learnings exist, propose additions to the relevant CLAUDE.md (project-level or global). Keep entries concise — one line per concept.
 
-## Step 5: Confirm Closeout
+## Step 5: Compliance Evidence
+
+After capturing tasks, memory, and learnings, process compliance evidence for the session.
+
+### 5a. Process Evidence Buffer
+
+Check if `~/.claude/memory/context/evidence-buffer.md` exists and has entries.
+
+If entries exist:
+1. Read the evidence buffer
+2. Group entries by type (commits, deploys, security scans, config changes)
+3. For each group, create/update Asana Production Change Log entries using the evidence-collector skill logic:
+   - Load Production Change Log GID from `~/.claude/memory/compliance-config.md`
+   - Create tasks with appropriate Change Type, Control ID, and subtask checklist
+   - Attach evidence details as comments
+4. Report: "Session evidence: [N] commits logged, [N] change records created/updated"
+
+If the evidence buffer is empty or doesn't exist: report "No evidence buffer entries this session."
+
+If compliance-config.md is not configured: skip this step and note "Compliance config not set up — run /os-setup to enable evidence collection."
+
+### 5b. Check for Unlogged Deployments
+
+Check the session history for `gcloud run deploy` or `docker push` commands.
+
+If deployments were detected but no corresponding Change Log entry exists:
+- Flag: "Deployment detected but not logged in Production Change Log"
+- Offer to create a Change Log entry now
+
+### 5c. Evidence Summary
+
+```
+COMPLIANCE EVIDENCE
+  Evidence buffer entries:     [N] processed
+  Change Log tasks created:    [N]
+  Change Log tasks updated:    [N]
+  Unlogged deployments:        [N] (if any)
+```
+
+---
+
+## Step 6: Confirm Closeout
 
 Summarize what was captured:
 - Tasks created (with Asana links if available)
 - Memory updated (what changed)
 - Learnings captured (what was added)
+- Compliance evidence processed (Change Log entries created/updated)
 - Any items intentionally skipped
 
 End with: "Session wrapped. Anything else before we close out?"

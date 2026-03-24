@@ -1,6 +1,6 @@
 ---
 description: Guided setup wizard for nuDesk OS — configure CLAUDE.md, Asana, memory, hooks, and MCP servers
-allowed-tools: Read, Write, Edit, Bash, Grep, Glob, mcp__plugin_asana_asana__asana_list_workspaces, mcp__plugin_asana_asana__asana_get_user, mcp__plugin_asana_asana__asana_get_teams_for_workspace, mcp__plugin_asana_asana__asana_get_projects_for_team, mcp__plugin_asana_asana__asana_get_project, mcp__plugin_asana_asana__asana_search_tasks, mcp__plugin_asana_asana__asana_get_task
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob, mcp__plugin_asana_asana__asana_list_workspaces, mcp__plugin_asana_asana__asana_get_user, mcp__plugin_asana_asana__asana_get_teams_for_workspace, mcp__plugin_asana_asana__asana_get_projects_for_team, mcp__plugin_asana_asana__asana_get_project, mcp__plugin_asana_asana__asana_search_tasks, mcp__plugin_asana_asana__asana_get_task, mcp__plugin_asana_asana__asana_create_project, mcp__plugin_asana_asana__asana_get_project_sections
 ---
 
 Guided, interactive setup for nuDesk OS. Detects what's already configured, walks through what's missing, and auto-discovers Asana GIDs via MCP.
@@ -53,10 +53,20 @@ Run all of these checks in parallel:
 - Check for `pr-review-toolkit`
 - Status: **Installed** or **Not installed**
 
+### 0g. Compliance Config
+- Check if `~/.claude/memory/compliance-config.md` exists
+- If it exists, check for placeholder markers like `[gid]`, `[date]`, `[basic / core / enterprise]`
+- Status: **Complete** (exists with real values), **Partial** (exists but has placeholders), or **Missing**
+
+### 0h. Vanta
+- Check if `~/.claude/memory/compliance-config.md` exists and has a Vanta section
+- Read the "API Access" row value
+- Status: **API enabled** (value is "yes"), **UI-only** (value is "no"), or **Not verified** (missing or placeholder)
+
 ### Present the Dashboard
 
 ```
-EXECUTIVE OS SETUP — Configuration Scan
+nuDesk OS SETUP — Configuration Scan
 
   CLAUDE.md                 — [Complete / Partial / Missing]
   Memory directories        — [Complete / Partial / Missing]
@@ -66,7 +76,9 @@ EXECUTIVE OS SETUP — Configuration Scan
   MCP: Fireflies            — [Configured / Not configured] (optional)
   MCP: HubSpot              — [Configured / Not configured] (optional)
   Compliance hooks          — [Installed / Not installed]
-  Plugin: pr-review-toolkit — [Installed / Not installed] (optional)
+  Compliance config         — [Complete / Partial / Missing]
+  Vanta                     — [API enabled / UI-only / Not verified]
+  Plugin: pr-review-toolkit — [Installed / Not installed] (recommended)
 ```
 
 Then call `AskUserQuestion`: "Proceed with all incomplete steps, or would you like to select specific steps?"
@@ -168,7 +180,12 @@ This step requires no user interaction unless all directories already exist. If 
 
 ### 3b. Google Workspace via `gws` CLI (Recommended)
 
-The `gws` CLI provides access to Gmail, Calendar, Drive, Chat, Docs, Sheets, Slides, and People — all via Bash commands (not an MCP server). Each user authenticates with their own nuDesk Google account.
+The `gws` CLI provides access to Gmail, Calendar, Drive, Chat, Docs, Sheets, Slides, and People — all via Bash commands (not an MCP server). Each user authenticates with their own Google account.
+
+**If not installed:**
+- Note that it enables Gmail, Calendar, Chat, Drive, Docs, Sheets, Slides, and People access
+- Point to the setup guide: `~/Projects/nudesk-os-plugin/references/mcp-setup/gws-cli-setup.md`
+- Do not block on this
 
 #### 3b-i. Check if `gws` is installed
 
@@ -198,7 +215,7 @@ gws auth status
 Parse the output:
 
 **If `token_valid` is not `true`:**
-- Instruct: "Run `gws auth setup` to authenticate with your nuDesk Google account. A browser window will open — sign in with your nuDesk email (@nudesk.ai)."
+- Instruct: "Run `gws auth setup` to authenticate with your Google account. A browser window will open — sign in with your email."
 - Call `AskUserQuestion`: "Run `gws auth setup` now and let me know when you've completed the browser sign-in."
 - **→ Your turn ends here.** After they confirm, run `gws auth status` again to verify.
 - If it still fails: point to `~/Projects/nudesk-os-plugin/references/setup/gws-cli-setup.md` for detailed troubleshooting.
@@ -214,7 +231,7 @@ gws gmail users messages list --params '{"userId":"me","maxResults":1}'
 **If successful:** Show green status — "gws CLI: Connected and authenticated."
 
 **If failed:** Diagnose:
-- Wrong account: "Are you authenticated with your nuDesk email? Run `gws auth status` to check which account is active."
+- Wrong account: "Are you authenticated with the correct email? Run `gws auth status` to check which account is active."
 - Missing Gmail scope: "Run `gws auth login -s gmail` to add Gmail access."
 - Other error: Reference `~/Projects/nudesk-os-plugin/references/setup/gws-cli-setup.md` troubleshooting section.
 
@@ -345,7 +362,7 @@ Call `AskUserQuestion`: "Here's your generated Asana config. Want me to write it
 
 ## Step 5: Compliance Hooks
 
-**If already installed:** Show status and skip to Step 6.
+**If already installed:** Show status and skip to Step 5b.
 
 **If not installed:**
 
@@ -361,6 +378,81 @@ Call `AskUserQuestion`: "Here's your generated Asana config. Want me to write it
 ### On confirmation:
 
 4. Write or edit `~/.claude/settings.json` with the hook merged in.
+5. Proceed to Step 5b.
+
+---
+
+## Step 5b: Compliance Infrastructure Setup
+
+**If compliance-config.md is Complete (exists with real GIDs and dates):** Show status and skip to Step 6.
+
+### Sub-step 5b-i: Check for Compliance Config
+
+Check if `~/.claude/memory/compliance-config.md` exists.
+
+- **If it exists with real values:** Show status and skip to Step 5b-iv (review dates).
+- **If it exists with placeholders or is missing:** Continue with auto-discovery.
+
+### Sub-step 5b-ii: Discover Production Change Log
+
+Search Asana for the Production Change Log project:
+1. Use `asana_search_tasks` or iterate through known projects from asana-config.md
+2. Look for a project named "Production Change Log" or similar (case-insensitive match on "change log", "production changes", "change management")
+3. If found, record the GID
+4. If not found, offer to create it:
+
+Call `AskUserQuestion`: "No Production Change Log project found in Asana. This project tracks all production changes for SOC 2 compliance (OS-01, CC8.1). Want me to create it? If you have an existing project for this, tell me the name."
+
+**→ Call `AskUserQuestion`. Your turn ends here.**
+
+### Sub-step 5b-iii: Create Missing Compliance Projects
+
+After confirming the Production Change Log, check for and offer to create:
+
+1. **Incident Response Log** — for tracking security incidents (IR-01 through IR-05)
+2. **Risk Register** — for tracking risks and treatment plans (RM-01 through RM-03)
+
+For each missing project, offer to create it via Asana MCP (`asana_create_project`).
+
+For each project that exists or is created, verify/create these custom fields:
+- **Control ID** (text field) — maps tasks to control IDs (AC-01 through AI-08)
+- **Change Type** (enum: Feature / Bugfix / Hotfix / Config / Infrastructure) — Production Change Log only
+- **Severity** (enum: P0 / P1 / P2 / P3) — Incident Response Log only
+- **Risk Level** (enum: Critical / High / Medium / Low) — Risk Register only
+
+Record all GIDs (projects and custom fields) for the compliance config.
+
+Call `AskUserQuestion`: "Here are the compliance projects and custom fields I've set up. Does this look correct?"
+
+**→ Call `AskUserQuestion`. Your turn ends here.**
+
+### Sub-step 5b-iv: Vanta Verification
+
+Ask the user about their Vanta status:
+
+Call `AskUserQuestion`: "What's your Vanta plan and API access status? Options:\n\n1. **I have API access** — I can see the Developer Console and create applications\n2. **UI-only** — I use Vanta but don't have API access\n3. **Not verified** — I haven't checked yet\n4. **No Vanta** — We don't use Vanta\n\nIf you have API access, I'll record the client ID (store the secret in ~/.env manually)."
+
+**→ Call `AskUserQuestion`. Your turn ends here.**
+
+### Sub-step 5b-v: Generate Compliance Config
+
+1. Read the template from `~/Projects/nudesk-os-plugin/templates/compliance-config.md.template`
+2. Fill in discovered values:
+   - Vanta plan and API access from user's answer
+   - Production Change Log GID
+   - Incident Response Log GID (if created)
+   - Risk Register GID (if created)
+   - Custom field GIDs
+   - Set initial scheduled review dates (next quarterly = next quarter start, next annual = 1 year from today)
+3. Present the generated config
+
+Call `AskUserQuestion`: "Here's your compliance config. Want me to write it to `~/.claude/memory/compliance-config.md`?"
+
+**→ Call `AskUserQuestion`. Your turn ends here.**
+
+### On confirmation:
+
+4. Write the file to `~/.claude/memory/compliance-config.md`
 5. Proceed to Step 6.
 
 ---

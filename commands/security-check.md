@@ -1,6 +1,6 @@
 ---
-description: Run a security review following the safe credential checklist
-allowed-tools: Read, Grep, Glob, Bash
+description: Run a security review following the safe credential checklist, with compliance context
+allowed-tools: Read, Grep, Glob, Bash, mcp__plugin_asana_asana__asana_search_tasks, mcp__plugin_asana_asana__asana_get_task
 ---
 
 Run a read-only security audit of the current project. This command checks for common vulnerabilities without exposing credential contents.
@@ -117,6 +117,39 @@ grep -r "os.getenv\|os.environ" --include="*.py"
   ```bash
   grep -r "sk-\|GOCSPX-\|BEGIN PRIVATE KEY\|password.*=.*['\"][^'\"]*[a-zA-Z0-9]" tests/ fixtures/ test_data/ 2>/dev/null
   ```
+
+### 6. Compliance Context
+
+After completing the local security checks, add compliance context:
+
+#### 6a. Map Findings to Control IDs
+
+For each finding, identify the relevant control ID from the 91-control matrix:
+
+| Finding Category | Relevant Controls |
+|-----------------|-------------------|
+| Hardcoded credentials | AC-13, CR-01 |
+| Missing .gitignore coverage | SD-02, DM-02 |
+| Secrets in git history | AC-08, IR-01 |
+| Missing test coverage | SD-04, OS-01 |
+| Unencrypted data | CR-01, CR-04, DM-02 |
+| Missing auth checks | AC-01, AC-02 |
+| PII in test data | OS-04, DM-02, AI-04 |
+
+#### 6b. Check Production Change Log
+
+If `~/.claude/memory/compliance-config.md` exists with a Production Change Log GID:
+- Use `asana_search_tasks` to find recent incomplete change records (tasks without all subtasks completed)
+- Flag any changes deployed without completing the change management checklist
+- Report: "[N] production changes with incomplete compliance checklists"
+
+If compliance config is not set up, skip this check and note: "Compliance config not configured — run /os-setup for full compliance checks"
+
+#### 6c. Offer Evidence Attachment
+
+If findings exist, offer:
+- "Attach scan results to the relevant Production Change Log task?"
+- "Create an evidence record via `/evidence-collect`?"
 
 ## Output Format
 

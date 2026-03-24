@@ -43,6 +43,34 @@ Report findings as:
 
 Group by severity (Critical > High > Medium). Include code snippets for each finding.
 
+## Compliance Context
+
+After completing the local security scan, add compliance context to findings:
+
+### Map Findings to Control IDs
+
+Cross-reference each finding with nuDesk's 91-control matrix. Use the control-action map at `~/Projects/nudesk-os-plugin/references/security/control-action-map.md` for mapping.
+
+Add a **Compliance Impact** column to the output:
+
+| Severity | File:Line | Issue | Remediation | Compliance Impact |
+|----------|-----------|-------|-------------|-------------------|
+| CRITICAL | path:123  | Description | How to fix | AC-13, SD-04 |
+
+### Check Evidence Library
+
+If `~/.claude/memory/compliance-config.md` exists with a Production Change Log GID:
+- Query Asana for related prior findings (search by keywords from current findings)
+- Note if similar issues were found and resolved before
+- If this is a recurring issue, flag it as a pattern requiring systemic fix
+
+### Offer Evidence Collection
+
+After presenting findings:
+- Offer to create an Asana task in the Production Change Log with findings attached
+- Offer to run `/evidence-collect` to formally log the scan results
+- If Vanta API is available, offer to sync findings
+
 ## Rules
 
 - **NEVER read credential file contents** — check existence, gitignore status, and references only

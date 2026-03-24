@@ -1,7 +1,7 @@
 {
   "name": "nudesk-os",
   "description": "nuDesk OS for Claude Code. Daily planning, strategic reviews, task execution, weekly reporting, and session management powered by Asana, Google Workspace, Fireflies, and HubSpot.",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "author": {
     "name": "nuDesk LLC",
     "email": "kenny@nudesk.ai"

@@ -1,6 +1,6 @@
 # nuDesk OS — Claude Code Plugin
 
-> **Version 3.0.0**
+> **Version 3.1.0**
 
 An executive operating system for Claude Code. Turns Claude into a daily operator that plans your day, executes tasks, generates weekly reports, runs security audits, and manages institutional memory — all powered by your existing tools.
 
@@ -21,6 +21,10 @@ An executive operating system for Claude Code. Turns Claude into a daily operato
 | `/nudesk-os:context-sync` | As needed | Gather a 7-day cross-system briefing — git, Asana, Calendar, Gmail, Chat |
 | `/nudesk-os:security-check` | As needed | Run a read-only security audit following the safe credential checklist |
 | `/nudesk-os:os-setup` | First run | Guided setup wizard — configure CLAUDE.md, Asana, memory, hooks, and MCP servers with auto-discovery |
+| `/nudesk-os:compliance-status` | As needed | Compliance dashboard — single view across Vanta and Asana compliance projects |
+| `/nudesk-os:evidence-collect` | As needed | Collect compliance evidence from git, deployments, infrastructure — prepare for Asana and Vanta |
+| `/nudesk-os:incident-log` | As needed | Log and track a security incident with severity classification and 6-phase response |
+| `/nudesk-os:compliance-report` | Quarterly | Generate audit-ready compliance report — all 91 controls with status and evidence |
 | `/nudesk-os:os-audit` | Monthly | Audit nuDesk OS installation — check config, plugins, compliance controls, and propose updates |
 
 ### Skills
@@ -30,7 +34,9 @@ An executive operating system for Claude Code. Turns Claude into a daily operato
 | **executive-planning** | Reference | Prioritization framework (embedded in commands, not invoked directly) |
 | **asana-agent** | Auto-triggered | "run my tasks", "check my Asana queue", "process today's tasks" |
 | **memory-management** | Auto-triggered | "remember this", "who is X", "what does X mean" |
-| **soc2-compliance** | Reference | SOC 2 Type II compliance controls for Claude Code workflows |
+| **soc2-compliance** | Active + Reference | SOC 2 compliance enforcement — queries Asana and Vanta for live control status against 91-control matrix |
+| **evidence-collector** | Background | Processes evidence buffer into Asana Change Log entries and Vanta uploads |
+| **vanta-bridge** | Background | Syncs Asana compliance data (change log, incidents) to Vanta via REST API |
 | **srd-generator** | On-demand | Generates Solution Requirements Documents for AI agent consumption — "PRD", "requirements document", "build brief", "spec out", "technical requirements" |
 | **ai-solution-architect** | On-demand | Technical strategy partner for AI solution design and build vs. buy decisions — "help me design", "I need to build", "architecture review", "solution design" |
 | **nudesk-brand-styling** | Auto-triggered | Applies nuDesk brand colors, typography, and design standards to presentations, reports, and client-facing materials |
@@ -49,6 +55,7 @@ An executive operating system for Claude Code. Turns Claude into a daily operato
 | `asana-config.md.template` | Asana GIDs, routing table, and scheduled task automation paths |
 | `memory-scaffold.md` | Memory directory structure and glossary starter |
 | `hooks-settings.json.template` | SOC 2 .env blocker hook for workspace settings |
+| `compliance-config.md.template` | Vanta status, Asana compliance project GIDs, custom fields, review schedule |
 
 ### References
 
@@ -56,10 +63,63 @@ Institutional knowledge docs bundled with the plugin — platform constraints, s
 
 | Directory | Contents |
 |-----------|----------|
-| `references/platform-references/` | Verified patterns and anti-patterns for managed platforms (n8n Cloud, GCP Cloud Run, Google APIs, HubSpot, Apollo, Lovable) |
-| `references/security/` | Security review guide — safe commands, dangerous commands to avoid, incident response |
+| `references/platform-references/` | Verified patterns and anti-patterns for managed platforms (n8n Cloud, GCP Cloud Run, Google APIs, HubSpot, Apollo, Lovable, Vanta) |
+| `references/security/` | Security review guide, control-action map (91 controls → enforcement mechanisms), executive permissions standard |
 | `references/setup/` | Setup guide for the `gws` CLI (Google Workspace via Bash) |
+| `references/mcp-setup/` | Step-by-step setup guides for Google Drive and Google Workspace MCP servers |
 | `references/brand-guides/` | Visual identity and brand voice rules for client-facing deliverables |
+
+## Compliance
+
+nuDesk OS includes a SOC 2 compliance operating system that bridges Vanta (primary compliance platform) and Asana (operational execution layer).
+
+### Architecture
+
+```
+VANTA (System of Record)
+├── Access Reviews, Vendor Assessments, Policy Acknowledgments
+├── Automated compliance tests and evidence collection
+└── Framework tracking (SOC 2 TSC mapping)
+
+ASANA (Operational Execution — workflows Vanta doesn't natively support)
+├── Production Change Log — all prod changes with compliance checklists
+├── Incident Response Log — structured 6-phase incident tracking
+└── Risk Register — active risks with treatment plans
+
+EXECUTIVE OS (Bridge + Enforcement)
+├── Hooks: .env blocker, pre-deploy gate, PII scan, evidence buffer
+├── Commands: /compliance-status, /evidence-collect, /incident-log, /compliance-report
+├── Skills: soc2-compliance (active), evidence-collector, vanta-bridge
+└── Enhanced: /security-check, /session-closeout, /weekly-report, /daily-plan
+```
+
+### 91 Controls Across 16 Policies
+
+All controls are mapped in `references/security/control-action-map.md`:
+- **28 Automatable** — enforced via hooks, scheduled tasks, auto-evidence
+- **31 Semi-Automated** — human-triggered commands with Asana workflows
+- **32 Policy-Only** — scheduled review reminders and acknowledgment tracking
+
+### Vanta Integration
+
+Works at all Vanta tiers:
+- **Basic (UI-only):** Evidence and reports generated locally for manual Vanta upload
+- **Core (API):** REST API sync via vanta-bridge skill
+- **Core+ (API + MCP):** Real-time queries + REST writes
+
+### Getting Started with Compliance
+
+1. Run `/nudesk-os:os-setup` — the wizard now includes compliance infrastructure setup (Step 5b)
+2. Run `/nudesk-os:compliance-status` for your first dashboard view
+3. Run `/nudesk-os:os-audit` to verify compliance config health
+
+### Evidence Collection Flow
+
+```
+Session Work → Hooks append to evidence buffer → /session-closeout processes buffer
+    → evidence-collector creates Asana Change Log entries
+    → vanta-bridge syncs to Vanta (if API available)
+```
 
 ## Prerequisites
 
