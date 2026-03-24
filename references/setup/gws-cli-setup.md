@@ -97,7 +97,7 @@ These skills cover Gmail, Calendar, Drive, Chat, Docs, Sheets, Slides, Meet, For
 Run:
 
 ```bash
-gws auth login
+gws auth setup
 ```
 
 When prompted, paste in the **OAuth Client ID and Client Secret** that were shared with you securely by your nuDesk admin.
@@ -161,7 +161,7 @@ gws auth login -s gmail,calendar,drive,chat,docs,sheets,slides,people
 | `which gws` returns nothing (macOS) | Run `brew install google/gws/gws` |
 | `gws` not found (Windows) | Ensure `gws.exe` is in a folder on your PATH; close and reopen PowerShell |
 | `token_valid: false` | Run `gws auth login` |
-| "No OAuth client configured" error | Ensure you have the OAuth Client ID and Secret from your nuDesk admin and paste them when prompted during `gws auth login` |
+| "No OAuth client configured" error | You ran `gws auth login` before configuring credentials. Run `gws auth setup` instead and paste in the Client ID and Secret when prompted. |
 | Wrong Google account authenticated | Run `gws auth login` again and sign in with your `@nudesk.ai` account |
 | Token expired | Run `gws auth login` (refresh token auto-handles most cases) |
 | Missing scope (403 error) | Run `gws auth login -s <scope>` for the missing service |

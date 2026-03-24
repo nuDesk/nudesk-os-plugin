@@ -146,7 +146,7 @@ The wizard will walk you through:
 1. **CLAUDE.md** — Generate your personal Claude config (name, role, stack, priorities)
 2. **Memory directories** — Create `~/.claude/memory/` structure
 3. **Asana config** — Auto-discover your workspace, user GID, projects, and custom fields via MCP
-4. **gws CLI** — Install and authenticate Google Workspace access. When prompted for scopes, select **"Recommended core consumer scopes"** and also manually check **"Chat messages"** (it is not included by default). See `references/setup/gws-cli-setup.md` for full details.
+4. **gws CLI** — Install and authenticate Google Workspace access. Run `gws auth setup`, paste in the Client ID and Secret when prompted, then select **"Recommended core consumer scopes"** and also manually check **"Chat messages"** (not included by default). See `references/setup/gws-cli-setup.md` for full details.
 5. **Compliance hooks** — Install the SOC 2 `.env` blocker hook
 6. **Skills** — Verify nuDesk OS skills are installed (srd-generator, ai-solution-architect, nudesk-brand-styling)
 
@@ -184,7 +184,7 @@ Then reload plugins in Claude Code with `/reload-plugins`.
 | Issue | Fix |
 |-------|-----|
 | Commands not appearing after install | Run `/reload-plugins` in Claude Code |
-| `gws` auth fails — "No OAuth client configured" | Ensure `gcloud` is installed and you have the OAuth Client ID and Secret from your nuDesk admin. Paste them when prompted during `gws auth login`. |
+| `gws` auth fails — "No OAuth client configured" | You ran `gws auth login` before configuring credentials. Run `gws auth setup` instead and paste in the Client ID and Secret when prompted. |
 | Asana MCP not connecting | Confirm the `asana` plugin is installed: `claude plugin list` |
 | Missing skills (srd-generator, etc.) | Run `/nudesk-os:os-setup` Step 6 — it checks and reinstalls if missing |
 | Need to start over | Run `/nudesk-os:os-setup` — it's safe to re-run, skips completed steps |
