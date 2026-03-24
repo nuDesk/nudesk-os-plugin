@@ -6,7 +6,9 @@ Complete setup for a new nuDesk team member. Takes about 10-15 minutes.
 
 ## Prerequisites
 
-Confirm all three are installed before starting:
+### macOS
+
+Confirm all three are installed:
 
 ```bash
 brew --version    # Should return a version number
@@ -29,7 +31,47 @@ npm install -g @anthropic-ai/claude-code
 brew install --cask google-cloud-sdk
 ```
 
-`gcloud` is required to configure the OAuth client used by the `gws` CLI for Google Workspace access. You will also need the `client_secret.json` file — retrieve it from the nuDesk NordPass vault before proceeding.
+---
+
+### Windows
+
+Open **PowerShell as Administrator** and confirm all three are installed:
+
+```powershell
+node --version    # Should return a version number
+claude --version  # Should return a version number
+gcloud --version  # Should return a version number
+```
+
+**If Node.js is not installed** (required for Claude Code):
+```powershell
+winget install OpenJS.NodeJS
+```
+Close and reopen PowerShell after installing.
+
+**If Claude Code CLI is not installed:**
+```powershell
+npm install -g @anthropic-ai/claude-code
+```
+
+**If Google Cloud SDK (`gcloud`) is not installed:**
+```powershell
+winget install Google.CloudSDK
+```
+Close and reopen PowerShell after installing, then run `gcloud init` to complete setup.
+
+---
+
+### Both platforms — credentials setup
+
+`gcloud` is required to configure the OAuth client used by the `gws` CLI for Google Workspace access. You will also need the `client_secret.json` file — retrieve it from the **nuDesk NordPass vault** before proceeding.
+
+Save it to the correct location for your OS:
+
+| OS | Path |
+|----|------|
+| macOS | `~/.config/gws/client_secret.json` |
+| Windows | `%USERPROFILE%\.config\gws\client_secret.json` (e.g. `C:\Users\yourname\.config\gws\client_secret.json`) |
 
 > **Note:** We are evaluating a simplified credential alternative that would remove this requirement. Until then, `gcloud` + the shared credentials file is the required path.
 
@@ -116,7 +158,9 @@ Then reload plugins in Claude Code with `/reload-plugins`.
 | Issue | Fix |
 |-------|-----|
 | Commands not appearing after install | Run `/reload-plugins` in Claude Code |
-| `gws` auth fails — "No OAuth client configured" | Ensure `gcloud` is installed and `client_secret.json` is saved to `~/.config/gws/client_secret.json` (retrieve from NordPass), then run `gws auth login` |
+| `gws` auth fails — "No OAuth client configured" | Ensure `client_secret.json` is in the correct path for your OS (see Prerequisites above), then run `gws auth login` |
 | Asana MCP not connecting | Confirm the `asana` plugin is installed: `claude plugin list` |
 | Missing skills (srd-generator, etc.) | Run `/nudesk-os:os-setup` Step 6 — it checks and reinstalls if missing |
 | Need to start over | Run `/nudesk-os:os-setup` — it's safe to re-run, skips completed steps |
+| Windows: `claude` not found after install | Close and reopen PowerShell, or run `npm install -g @anthropic-ai/claude-code` again |
+| Windows: `gcloud` not found after install | Close and reopen PowerShell; if still missing, re-run `winget install Google.CloudSDK` |
