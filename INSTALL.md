@@ -120,7 +120,7 @@ The wizard will walk you through:
 1. **CLAUDE.md** — Generate your personal Claude config (name, role, stack, priorities)
 2. **Memory directories** — Create `~/.claude/memory/` structure
 3. **Asana config** — Auto-discover your workspace, user GID, projects, and custom fields via MCP
-4. **gws CLI** — Install and authenticate Google Workspace access (Gmail, Calendar, Drive, Chat)
+4. **gws CLI** — Install and authenticate Google Workspace access. When prompted for scopes, select **"Recommended core consumer scopes"** and also manually check **"Chat messages"** (it is not included by default). See `references/setup/gws-cli-setup.md` for full details.
 5. **Compliance hooks** — Install the SOC 2 `.env` blocker hook
 6. **Skills** — Verify nuDesk OS skills are installed (srd-generator, ai-solution-architect, nudesk-brand-styling)
 

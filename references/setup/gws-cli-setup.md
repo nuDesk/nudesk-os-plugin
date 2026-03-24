@@ -121,7 +121,15 @@ Confirm `client_secret.json` is in place (from NordPass, at the path for your OS
 gws auth login
 ```
 
-This opens a browser for OAuth consent. Sign in with your **nuDesk Google account** (`@nudesk.ai`). Select **Full Access (All Scopes)** when prompted on the consent screen.
+This opens an interactive scope selection screen in the terminal. Follow these steps carefully:
+
+1. **Select "Recommended core consumer scopes"** — use arrow keys to highlight it, then press `Space` to check it. Do NOT select "Full access (all scopes)" — it appears broader but is missing key services.
+
+2. **Also check "Chat messages"** — scroll up in the list to find it (it appears just above Drive). Press `Space` to check it. This scope is NOT included in the consumer defaults and is required for Google Chat automation.
+
+3. Press `Enter` to continue. Copy the OAuth URL and open it in a browser. Sign in with your **nuDesk Google account** (`@nudesk.ai`) and click **Allow** to grant the permissions.
+
+> **Note on Calendar:** Consumer scopes include full Calendar read/write access. Do not manually select any "read-only" calendar scope — it will downgrade your permissions.
 
 ---
 
