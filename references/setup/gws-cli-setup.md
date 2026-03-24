@@ -50,28 +50,7 @@ Verify: `gcloud --version`
 
 ### Both platforms — credentials setup
 
-The `gws` CLI requires an OAuth client to authenticate. This is configured via a `client_secret.json` file tied to a GCP project.
-
-Retrieve the `client_secret.json` file from the **nuDesk NordPass vault** and save it to the correct location for your OS:
-
-| OS | Path |
-|----|------|
-| macOS | `~/.config/gws/client_secret.json` |
-| Windows | `%USERPROFILE%\.config\gws\client_secret.json` (e.g. `C:\Users\yourname\.config\gws\client_secret.json`) |
-
-Create the folder if it doesn't exist:
-
-**macOS:**
-```bash
-mkdir -p ~/.config/gws
-```
-
-**Windows (PowerShell):**
-```powershell
-New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.config\gws"
-```
-
-> **Note:** We are evaluating a simplified credential path that would remove the gcloud dependency. Until then, the shared credentials file is required.
+The `gws` CLI requires an OAuth client to authenticate. Before proceeding, make sure you have received the **OAuth Client ID and Client Secret** from your nuDesk admin — they will be shared with you securely. You will be prompted to paste them in during Step 4.
 
 ---
 
@@ -115,13 +94,15 @@ These skills cover Gmail, Calendar, Drive, Chat, Docs, Sheets, Slides, Meet, For
 
 ## 4. Authenticate
 
-Confirm `client_secret.json` is in place (from NordPass, at the path for your OS listed above), then run:
+Run:
 
 ```bash
 gws auth login
 ```
 
-This opens an interactive scope selection screen in the terminal. Follow these steps carefully:
+When prompted, paste in the **OAuth Client ID and Client Secret** that were shared with you securely by your nuDesk admin.
+
+This then opens an interactive scope selection screen in the terminal. Follow these steps carefully:
 
 1. **Select "Recommended core consumer scopes"** — use arrow keys to highlight it, then press `Space` to check it. Do NOT select "Full access (all scopes)" — it appears broader but is missing key services.
 
@@ -180,7 +161,7 @@ gws auth login -s gmail,calendar,drive,chat,docs,sheets,slides,people
 | `which gws` returns nothing (macOS) | Run `brew install google/gws/gws` |
 | `gws` not found (Windows) | Ensure `gws.exe` is in a folder on your PATH; close and reopen PowerShell |
 | `token_valid: false` | Run `gws auth login` |
-| "No OAuth client configured" error | Ensure `client_secret.json` is saved to the correct path for your OS (see Prerequisites above) |
+| "No OAuth client configured" error | Ensure you have the OAuth Client ID and Secret from your nuDesk admin and paste them when prompted during `gws auth login` |
 | Wrong Google account authenticated | Run `gws auth login` again and sign in with your `@nudesk.ai` account |
 | Token expired | Run `gws auth login` (refresh token auto-handles most cases) |
 | Missing scope (403 error) | Run `gws auth login -s <scope>` for the missing service |

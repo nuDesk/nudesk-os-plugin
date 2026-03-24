@@ -97,16 +97,9 @@ gcloud --version
 
 ### Both platforms — credentials setup
 
-`gcloud` is required to configure the OAuth client used by the `gws` CLI for Google Workspace access. You will also need the `client_secret.json` file — retrieve it from the **nuDesk NordPass vault** before proceeding.
+`gcloud` is required to configure the OAuth client used by the `gws` CLI for Google Workspace access.
 
-Save it to the correct location for your OS:
-
-| OS | Path |
-|----|------|
-| macOS | `~/.config/gws/client_secret.json` |
-| Windows | `%USERPROFILE%\.config\gws\client_secret.json` (e.g. `C:\Users\yourname\.config\gws\client_secret.json`) |
-
-> **Note:** We are evaluating a simplified credential alternative that would remove this requirement. Until then, `gcloud` + the shared credentials file is the required path.
+Before proceeding, make sure you have received the **OAuth Client ID and Client Secret** from your nuDesk admin — they will be shared with you securely. You will be prompted to paste them in during the authentication step.
 
 ---
 
@@ -191,7 +184,7 @@ Then reload plugins in Claude Code with `/reload-plugins`.
 | Issue | Fix |
 |-------|-----|
 | Commands not appearing after install | Run `/reload-plugins` in Claude Code |
-| `gws` auth fails — "No OAuth client configured" | Ensure `client_secret.json` is in the correct path for your OS (see Prerequisites above), then run `gws auth login` |
+| `gws` auth fails — "No OAuth client configured" | Ensure `gcloud` is installed and you have the OAuth Client ID and Secret from your nuDesk admin. Paste them when prompted during `gws auth login`. |
 | Asana MCP not connecting | Confirm the `asana` plugin is installed: `claude plugin list` |
 | Missing skills (srd-generator, etc.) | Run `/nudesk-os:os-setup` Step 6 — it checks and reinstalls if missing |
 | Need to start over | Run `/nudesk-os:os-setup` — it's safe to re-run, skips completed steps |
