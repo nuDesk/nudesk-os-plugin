@@ -6,11 +6,12 @@ Complete setup for a new nuDesk team member. Takes about 10-15 minutes.
 
 ## Prerequisites
 
-Confirm both are installed before starting:
+Confirm all three are installed before starting:
 
 ```bash
 brew --version    # Should return a version number
 claude --version  # Should return a version number
+gcloud --version  # Should return a version number
 ```
 
 **If Homebrew is not installed:**
@@ -22,6 +23,15 @@ claude --version  # Should return a version number
 ```bash
 npm install -g @anthropic-ai/claude-code
 ```
+
+**If Google Cloud SDK (`gcloud`) is not installed:**
+```bash
+brew install --cask google-cloud-sdk
+```
+
+`gcloud` is required to configure the OAuth client used by the `gws` CLI for Google Workspace access. You will also need the `client_secret.json` file — retrieve it from the nuDesk NordPass vault before proceeding.
+
+> **Note:** We are evaluating a simplified credential alternative that would remove this requirement. Until then, `gcloud` + the shared credentials file is the required path.
 
 ---
 
@@ -106,7 +116,7 @@ Then reload plugins in Claude Code with `/reload-plugins`.
 | Issue | Fix |
 |-------|-----|
 | Commands not appearing after install | Run `/reload-plugins` in Claude Code |
-| `gws` auth fails during setup | Run `gws auth setup` manually, sign in with your `@nudesk.ai` account |
+| `gws` auth fails — "No OAuth client configured" | Ensure `gcloud` is installed and `client_secret.json` is saved to `~/.config/gws/client_secret.json` (retrieve from NordPass), then run `gws auth login` |
 | Asana MCP not connecting | Confirm the `asana` plugin is installed: `claude plugin list` |
 | Missing skills (srd-generator, etc.) | Run `/nudesk-os:os-setup` Step 6 — it checks and reinstalls if missing |
 | Need to start over | Run `/nudesk-os:os-setup` — it's safe to re-run, skips completed steps |

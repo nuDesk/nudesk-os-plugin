@@ -16,6 +16,22 @@ Homebrew must be installed on macOS:
 
 Verify: `brew --version`
 
+**Google Cloud SDK (`gcloud`) is also required.** The `gws` CLI needs an OAuth client to authenticate — this is configured via a `client_secret.json` file tied to a GCP project.
+
+```bash
+brew install --cask google-cloud-sdk
+```
+
+Verify: `gcloud --version`
+
+Before continuing, retrieve the `client_secret.json` file from the **nuDesk NordPass vault** and save it to:
+
+```
+~/.config/gws/client_secret.json
+```
+
+> **Note:** We are evaluating a simplified credential path that would remove the gcloud dependency. Until then, the shared credentials file is required.
+
 ---
 
 ## 2. Install gws CLI
@@ -42,13 +58,13 @@ These skills cover Gmail, Calendar, Drive, Chat, Docs, Sheets, Slides, Meet, For
 
 ## 4. Authenticate
 
-Run the auth wizard — it opens a browser for OAuth consent:
+Confirm `client_secret.json` is in place (from NordPass, saved to `~/.config/gws/client_secret.json`), then run:
 
 ```bash
-gws auth setup
+gws auth login
 ```
 
-Sign in with your **nuDesk Google account** (`@nudesk.ai`). Select **Full Access (All Scopes)** when prompted on the consent screen.
+This opens a browser for OAuth consent. Sign in with your **nuDesk Google account** (`@nudesk.ai`). Select **Full Access (All Scopes)** when prompted on the consent screen.
 
 ---
 
@@ -98,7 +114,8 @@ gws auth login -s gmail,calendar,drive,chat,docs,sheets,slides,people
 |-------|-----|
 | `which gws` returns nothing | Run `brew install google/gws/gws` |
 | `token_valid: false` | Run `gws auth login` |
-| Wrong Google account authenticated | Run `gws auth setup` and sign in with your `@nudesk.ai` account |
+| "No OAuth client configured" error | Ensure `client_secret.json` is saved to `~/.config/gws/client_secret.json` (retrieve from NordPass) |
+| Wrong Google account authenticated | Run `gws auth login` again and sign in with your `@nudesk.ai` account |
 | Token expired | Run `gws auth login` (refresh token auto-handles most cases) |
 | Missing scope (403 error) | Run `gws auth login -s <scope>` for the missing service |
 | `validationError` on service name | Run `gws --help` for valid service names |
