@@ -4,7 +4,7 @@ Complete setup for a new nuDesk team member. Takes about 10-15 minutes.
 
 ---
 
-## Prerequisites
+## Prerequisites — Part 1: Install Required Software
 
 ### macOS
 
@@ -95,11 +95,60 @@ gcloud --version
 
 ---
 
-### Both platforms — credentials setup
+## Prerequisites — Part 2: Launch Claude and Authenticate GWS
 
-`gcloud` is required to configure the OAuth client used by the `gws` CLI for Google Workspace access.
+### Launch Claude Code
 
-Before proceeding, make sure you have received the **OAuth Client ID and Client Secret** from your nuDesk admin — they will be shared with you securely. You will be prompted to paste them in during the authentication step.
+1. Open a terminal (macOS: Terminal app / Windows: PowerShell)
+2. Navigate to your working folder. The easiest way is to type `cd` followed by a space, then drag your working folder into the terminal window — it will fill in the path automatically. Hit Enter.
+3. Type `claude` and hit Enter to launch Claude Code
+
+If prompted to log in, type `/login` and follow the browser authorization flow. Sign in with your nuDesk Google account (`@nudesk.ai`) and click **Allow**.
+
+---
+
+### Credentials you will need
+
+Before authenticating GWS, make sure your nuDesk admin has shared the following with you securely:
+
+- **OAuth Client ID**
+- **OAuth Client Secret**
+
+Have these ready to paste in — you will be prompted for them in the next step.
+
+---
+
+### Authenticate GWS CLI
+
+The GWS CLI gives Claude Code access to Gmail, Calendar, Drive, Chat, Docs, and Sheets on your behalf.
+
+1. Open a **new terminal tab** (do not use the Claude Code terminal for this)
+2. Navigate to your working folder the same way as above (`cd` + drag + Enter)
+3. Run:
+
+```bash
+gws auth setup
+```
+
+4. When prompted, paste in your **OAuth Client ID**, then your **OAuth Client Secret**
+
+5. An interactive scope selection screen will appear. Follow these steps:
+   - Scroll to **"Recommended core consumer scopes"** and press `Space` to select it
+   - Scroll up in the list to find **"Chat messages"** (located just above Drive) and press `Space` to select it — this is not included in the defaults and is required for Google Chat
+   - Press `Enter` to continue
+
+   > Do not select any "read-only" scope variants — they will limit what Claude can do on your behalf.
+
+6. Copy the OAuth URL that appears and open it in your browser
+7. Sign in with your **nuDesk Google account** (`@nudesk.ai`) and click **Allow**
+8. Return to the terminal — you should see a confirmation that authentication was successful
+
+Verify:
+```bash
+gws auth status
+```
+
+Confirm `token_valid: true` and that the email matches your nuDesk address.
 
 ---
 
@@ -118,9 +167,9 @@ Open Claude Code and type `/plugin`, then press Enter.
 
 ## Step 2: Install Required Plugins
 
-Open Claude Code and type `/plugin`, then press Enter. Use the plugin browser to search for and install each of the following one at a time. Always select **"Install for you (user scope)"** so plugins are available across all your projects.
+Type `/plugin` in Claude Code and press Enter. Search for and install each plugin one at a time. Always select **"Install for you (user scope)"** so plugins are available across all your projects.
 
-**Required plugins — install this one:**
+**Required — install this one:**
 
 | Plugin | Search for |
 |--------|------------|
@@ -144,7 +193,7 @@ Once all plugins are installed, run `/reload-plugins` to activate them in your c
 
 ## Step 3: Run the Setup Wizard
 
-Open Claude Code and run:
+In Claude Code, run:
 
 ```
 /nudesk-os:os-setup
@@ -155,7 +204,7 @@ The wizard will walk you through:
 1. **CLAUDE.md** — Generate your personal Claude config (name, role, stack, priorities)
 2. **Memory directories** — Create `~/.claude/memory/` structure
 3. **Asana config** — Auto-discover your workspace, user GID, projects, and custom fields via MCP
-4. **gws CLI** — Install and authenticate Google Workspace access. Run `gws auth setup`, paste in the Client ID and Secret when prompted, then select **"Recommended core consumer scopes"** and also manually check **"Chat messages"** (not included by default). See `references/setup/gws-cli-setup.md` for full details.
+4. **gws CLI** — Confirm GWS authentication from Part 2 above
 5. **Compliance hooks** — Install the SOC 2 `.env` blocker hook
 6. **Skills** — Verify nuDesk OS skills are installed (srd-generator, ai-solution-architect, nudesk-brand-styling)
 
@@ -188,7 +237,7 @@ When a new version is released, type `/plugin` in Claude Code, navigate to **Ins
 |-------|-----|
 | Commands not appearing after install | Run `/reload-plugins` in Claude Code |
 | `gws` auth fails — "No OAuth client configured" | You ran `gws auth login` before configuring credentials. Run `gws auth setup` instead and paste in the Client ID and Secret when prompted. |
-| Asana MCP not connecting | Confirm the `asana` plugin is installed: `claude plugin list` |
+| Asana MCP not connecting | Confirm the `asana` plugin is installed via `/plugin` |
 | Missing skills (srd-generator, etc.) | Run `/nudesk-os:os-setup` Step 6 — it checks and reinstalls if missing |
 | Need to start over | Run `/nudesk-os:os-setup` — it's safe to re-run, skips completed steps |
 | Windows: `claude` not found after install | Close and reopen PowerShell, or run `npm install -g @anthropic-ai/claude-code` again |
