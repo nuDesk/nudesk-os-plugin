@@ -120,23 +120,23 @@ Open Claude Code and type `/plugin`, then press Enter.
 
 Open Claude Code and type `/plugin`, then press Enter. Use the plugin browser to search for and install each of the following one at a time. Always select **"Install for you (user scope)"** so plugins are available across all your projects.
 
-**Required plugins — install all of these:**
+**Required plugins — install this one:**
 
 | Plugin | Search for |
 |--------|------------|
-| Asana | `asana` |
-| Commit Commands | `commit` |
-| Ralph Loop | `ralph` |
-| Security Guidance | `security` |
-| Superpowers | `superpowers` |
 | Skill Creator | `skill` |
 
-**Role-specific — install if relevant to your work:**
+**Role-specific — install based on your role:**
 
 | Plugin | Search for | When to install |
 |--------|------------|-----------------|
-| Frontend Design | `frontend` | If building UI |
-| Playwright | `playwright` | If doing browser automation |
+| Asana | `asana` | Task and project management |
+| Commit Commands | `commit` | Git workflow automation |
+| Ralph Loop | `ralph` | Recurring agent tasks |
+| Security Guidance | `security` | Security reviews and compliance |
+| Superpowers | `superpowers` | Advanced Claude Code workflows |
+| Frontend Design | `frontend` | Building UI |
+| Playwright | `playwright` | Browser automation |
 
 Once all plugins are installed, run `/reload-plugins` to activate them in your current session.
 
