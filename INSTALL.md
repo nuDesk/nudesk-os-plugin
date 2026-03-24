@@ -105,12 +105,14 @@ Before proceeding, make sure you have received the **OAuth Client ID and Client 
 
 ## Step 1: Install nuDesk OS
 
-Register the nuDesk plugin marketplace and install:
+Open Claude Code and type `/plugin`, then press Enter.
 
-```bash
-claude plugin marketplace add https://github.com/nuDesk/nudesk-os-plugin
-claude plugin install nudesk-os@nudesk-os
-```
+1. Navigate to **Marketplaces** and select **Add Marketplace**
+2. Paste in the nuDesk plugin repository URL:
+   ```
+   https://github.com/nuDesk/nudesk-os-plugin
+   ```
+3. Once added, go to **Discover**, find **nuDesk OS**, and install it
 
 ---
 
