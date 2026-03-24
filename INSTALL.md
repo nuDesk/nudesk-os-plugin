@@ -178,13 +178,7 @@ For a detailed health report:
 
 ## Updating nuDesk OS
 
-When a new version is released:
-
-```bash
-claude plugin update nudesk-os@nudesk-os
-```
-
-Then reload plugins in Claude Code with `/reload-plugins`.
+When a new version is released, type `/plugin` in Claude Code, navigate to **Installed**, find **nuDesk OS**, and select **Update**. Then run `/reload-plugins` to apply the changes.
 
 ---
 
