@@ -116,20 +116,27 @@ claude plugin install nudesk-os@nudesk-os
 
 ## Step 2: Install Required Plugins
 
-```bash
-claude plugin add asana@claude-plugins-official
-claude plugin add commit-commands@claude-plugins-official
-claude plugin add ralph-loop@claude-plugins-official
-claude plugin add security-guidance@claude-plugins-official
-claude plugin add superpowers@claude-plugins-official
-claude plugin add skill-creator@claude-plugins-official
-```
+Open Claude Code and type `/plugin`, then press Enter. Use the plugin browser to search for and install each of the following one at a time. Always select **"Install for you (user scope)"** so plugins are available across all your projects.
 
-**Role-specific (install if relevant to your work):**
-```bash
-claude plugin add frontend-design@claude-plugins-official  # If building UI
-claude plugin add playwright@claude-plugins-official       # If doing browser automation
-```
+**Required plugins — install all of these:**
+
+| Plugin | Search for |
+|--------|------------|
+| Asana | `asana` |
+| Commit Commands | `commit` |
+| Ralph Loop | `ralph` |
+| Security Guidance | `security` |
+| Superpowers | `superpowers` |
+| Skill Creator | `skill` |
+
+**Role-specific — install if relevant to your work:**
+
+| Plugin | Search for | When to install |
+|--------|------------|-----------------|
+| Frontend Design | `frontend` | If building UI |
+| Playwright | `playwright` | If doing browser automation |
+
+Once all plugins are installed, run `/reload-plugins` to activate them in your current session.
 
 ---
 
