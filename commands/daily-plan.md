@@ -1,23 +1,25 @@
 ---
-description: Generate a prioritized daily plan from Asana, Calendar, Gmail, Fireflies, and HubSpot
+description: Generate a prioritized daily plan from Asana, Calendar, Fireflies, and HubSpot
 allowed-tools: Read, Grep, Glob, Bash, Write, Edit
 ---
 
-Generate the user's prioritized daily plan. This is the morning command — scan all sources, synthesize, and deliver a ranked action list with effort tags.
+Generate the user's prioritized daily plan. This is the morning command -- scan all sources, synthesize, and deliver a ranked action list with effort tags.
+
+The command runs in two phases: first surface calendar and uncaptured commitments (pause for input), then present the full prioritized action list.
 
 ## Step 1: Load Context
 
 Read `~/.claude/CLAUDE.md` to load:
-- **User profile** — name, email, role from the "Who I Am" section
-- **Current priorities** — from the "Priorities" section (strategic lens for ranking)
-- **Working Memory** — people, terms, clients from the "Working Memory" section
-- **Integration config** — email address, HubSpot owner ID, and other service identifiers
+- **User profile** -- name, email, role from the "Who I Am" section
+- **Current priorities** -- from the "Priorities" section (strategic lens for ranking)
+- **Working Memory** -- people, terms, clients from the "Working Memory" section
+- **Integration config** -- email address, HubSpot owner ID, and other service identifiers
 
-Pay special attention to the "Priorities" section — these are the strategic lens for ranking everything.
+Pay special attention to the "Priorities" section -- these are the strategic lens for ranking everything.
 
 ## Step 2: Pull Data from All Sources (in parallel where possible)
 
-### Asana — Today's Tasks + Overdue
+### Asana -- Today's Tasks + Overdue
 Load Asana GIDs from `~/.claude/memory/asana-config.md` for all workspace, user, and custom field references.
 
 Search for tasks assigned to me:
@@ -27,7 +29,7 @@ Search for tasks assigned to me:
 
 Also check for tasks in "Agent Queue" status (these should be called out separately as automatable).
 
-### Google Calendar — Today's Schedule
+### Google Calendar -- Today's Schedule
 Use the **`gws` CLI** via Bash (NOT claude.ai connectors). Run:
 ```
 gws calendar events list --params '{"calendarId": "primary", "timeMin": "<today>T00:00:00Z", "timeMax": "<today>T23:59:59Z", "maxResults": 25, "singleEvents": true, "orderBy": "startTime"}'
@@ -35,46 +37,30 @@ gws calendar events list --params '{"calendarId": "primary", "timeMin": "<today>
 
 Map committed time blocks and note gaps available for focused work.
 
-**If auth fails:** Note "Calendar data unavailable — run `gws auth login -s calendar` to re-auth."
+**If auth fails:** Note "Calendar data unavailable -- run `gws auth login -s calendar` to re-auth."
 
-### Gmail — Flagged/Important Unread
-Use the **`gws` CLI** via Bash (NOT claude.ai connectors). Run:
-```
-gws gmail users messages list --params '{"userId": "me", "q": "is:important is:unread newer_than:1d", "maxResults": 15}'
-```
-Then fetch individual message details with:
-```
-gws gmail users messages get --params '{"userId": "me", "id": "<messageId>"}'
-```
-
-Prioritize messages from known contacts listed in CLAUDE.md Working Memory. Flag anything that looks time-sensitive or requires a response.
-
-**If auth fails:** Note "Gmail data unavailable — run `gws auth login -s gmail` to re-auth."
-
-### Fireflies — Recent Meeting Action Items
+### Fireflies -- Recent Meeting Action Items
 Use `fireflies_get_transcripts` for the past 2 days. Extract action items assigned to the user from meeting summaries. These represent commitments that need follow-through.
 
 ### Commitment Cross-Reference (Fireflies vs Asana)
 
 After gathering both Fireflies action items and Asana tasks, compare them:
 
-1. For each Fireflies action item, check if a matching Asana task already exists (match by keyword/topic — exact title match is not required)
+1. For each Fireflies action item, check if a matching Asana task already exists (match by keyword/topic -- exact title match is not required)
 2. Separate into two lists:
    - **Tracked**: Action items that have a corresponding Asana task (include in priority ranking as-is)
    - **Uncaptured**: Action items with no matching Asana task (these are commitments at risk of being dropped)
 
-If uncaptured commitments are found, they will be surfaced in a dedicated section of the daily plan output (see Step 4) and offered for quick task creation in Step 5.
-
 **If Fireflies MCP is not available:** Skip this cross-reference and continue.
 
-### HubSpot — My Deals & Tasks Only
+### HubSpot -- My Deals & Tasks Only
 Use HubSpot MCP tools filtered to the user's HubSpot owner ID (from CLAUDE.md). Do NOT show deals or tasks owned by other team members.
 
 **Deals:** Search for open deals where `hubspot_owner_id` = user's owner ID and dealstage is not closedwon/closedlost. Include properties: dealname, dealstage, closedate, amount, notes_last_updated. Sort by closedate ascending.
 
 **Tasks:** Search for HubSpot tasks (objectType: `tasks`) where `hubspot_owner_id` = user's owner ID and `hs_task_status` != `COMPLETED`. Include properties: hs_task_subject, hs_task_status, hs_timestamp, hs_task_priority.
 
-Keep this lightweight — only surface items needing attention.
+Keep this lightweight -- only surface items needing attention.
 
 ### Compliance Quick Check
 
@@ -83,10 +69,8 @@ After pulling all data sources, run a lightweight compliance check (2-3 Asana qu
 Load `~/.claude/memory/compliance-config.md`. If it exists with real GIDs:
 
 1. **Scheduled reviews due within 7 days?** Read the Scheduled Reviews table and compare dates to today.
-2. **Incomplete production change records?** `asana_search_tasks` against Production Change Log — count tasks with `completed` = false (open changes without completed checklists).
-3. **Open incidents?** `asana_search_tasks` against Incident Response Log — count/severity of open incidents.
-
-Include findings in the daily plan output under a "COMPLIANCE" section (see Step 4).
+2. **Incomplete production change records?** `asana_search_tasks` against Production Change Log -- count tasks with `completed` = false (open changes without completed checklists).
+3. **Open incidents?** `asana_search_tasks` against Incident Response Log -- count/severity of open incidents.
 
 If compliance-config.md is not configured: skip this check entirely. Do not mention it.
 
@@ -97,7 +81,6 @@ If compliance-config.md is not configured: skip this check entirely. Do not ment
 Apply the 4-tier prioritization framework below. Cross-reference all sources against CLAUDE.md priorities.
 
 ### Tier 1: Non-Negotiable (do first)
-- Calendar commitments (meetings, calls)
 - Client deliverable deadlines
 - Commitments made in recent meetings (Fireflies action items)
 - Anything blocking someone else's work
@@ -132,69 +115,83 @@ Assign one tag to each action item:
 ### Context Awareness
 
 When synthesizing, account for:
-- **Calendar density** — Heavy meeting days mean only quick tasks fit in gaps
-- **Energy management** — Front-load strategic/creative work, back-load admin
-- **Stakeholder urgency** — Requests from key contacts (listed in CLAUDE.md) get elevated; internal admin gets deferred
-- **Momentum** — If a project has been stalled, consider prioritizing to unblock
+- **Calendar density** -- Heavy meeting days mean only quick tasks fit in gaps
+- **Energy management** -- Front-load strategic/creative work, back-load admin
+- **Stakeholder urgency** -- Requests from key contacts (listed in CLAUDE.md) get elevated; internal admin gets deferred
+- **Momentum** -- If a project has been stalled, consider prioritizing to unblock
+- **Capacity** -- If total effort of Tier 1 + Tier 2 items exceeds available non-meeting hours, recommend deferring Tier 3/4 items to specific later days this week
 
 ### Synthesis Order
-1. **Commitments with deadlines** — meetings, deliverables due today
-2. **Strategic priority items** — tasks aligned with top CLAUDE.md priorities
-3. **Relationship maintenance** — emails/follow-ups with key stakeholders
-4. **Pipeline items** — BD or HubSpot items needing movement
-5. **Operational tasks** — admin, routine items
+1. **Commitments with deadlines** -- deliverables due today
+2. **Strategic priority items** -- tasks aligned with top CLAUDE.md priorities
+3. **Pipeline items** -- BD or HubSpot items needing movement
+4. **Operational tasks** -- admin, routine items
 
-## Step 4: Present the Daily Plan
+---
 
-Output format — clean, scannable, no fluff:
+## Step 4: Present Phase A -- Calendar + Uncaptured Commitments
+
+Present this first and **stop to wait for user input** before continuing to Phase B.
+
+Output format:
 
 ```
-DAILY PLAN — [Today's Date]
+DAILY PLAN -- [Today's Date]
 
 CALENDAR
-[List today's meetings with times, or "No calendar data available"]
+[List today's meetings with times and attendees. No prep tasks -- just the schedule. Or "No calendar data available"]
 
+UNCAPTURED COMMITMENTS (from meetings -- no Asana task found)
+1. [Action item] -- [Meeting name, date]
+2. ...
+[Or "None found"]
+```
+
+If uncaptured commitments exist, prompt:
+
+"Found [N] meeting commitments without Asana tasks. Want me to create tasks for these? (all / select numbers / skip)"
+
+If approved: Create tasks using the same pattern as `/log-task` -- smart project routing from `asana-config.md`, set Task Progress to "Not Started", Type and Priority based on context. Set due dates based on urgency (commitments from today/yesterday = due today, older = due tomorrow).
+
+**Wait for the user's response before proceeding to Step 5.**
+
+## Step 5: Present Phase B -- Priority Actions
+
+After the user responds to uncaptured commitments, merge all sources into one ranked list: Asana tasks, newly created commitment tasks, HubSpot items, and CLAUDE.md priorities.
+
+Output format:
+
+```
 PRIORITY ACTIONS (ranked)
-1. [Task/action] — [source] — [effort: 15m/30m/1hr/2hr/deep work]
-2. [Task/action] — [source] — [effort tag]
+1. [Task/action] -- [source] -- [effort: 15m/30m/1hr/2hr/deep]
+2. [Task/action] -- [source] -- [effort tag]
 3. ...
-
-EMAILS NEEDING RESPONSE
-- [Sender]: [Subject snippet] — [urgency: now/today/this week]
-
-UNCAPTURED COMMITMENTS (from meetings — no Asana task found)
-- [Action item] — [Meeting name, date] — Want me to create a task?
 
 AGENT QUEUE (automatable)
 - [Tasks that can be run via /run-tasks]
+[Or omit section if none]
 
-COMPLIANCE (if applicable)
+COMPLIANCE
 - Reviews due within 7 days: [list or "None"]
 - Incomplete change records: [N]
 - Open incidents: [count by severity or "None"]
-
-WATCH LIST (not urgent but track)
-- [Items to keep on radar]
+[Or omit section if compliance-config.md not configured]
 ```
 
-Keep the total list to **no more than 10 priority actions**. If there are more, group lower-priority items under "Watch List."
+Keep the total list to **no more than 10 priority actions**. If there are more than 10, drop the lowest-ranked items entirely (do not create a separate overflow section).
 
-## Step 5: Interactive Handoff
+If the day looks overloaded (total effort exceeds available non-meeting hours), explicitly recommend which Tier 3/4 items to push later in the week and suggest specific days.
 
-After presenting the plan:
+If priority is unclear between items, use AskUserQuestion to clarify before finalizing the list.
 
-1. If uncaptured commitments were found, prompt:
+## Step 6: Interactive Handoff
 
-   "Found [N] meeting commitments without Asana tasks. Want me to create tasks for these? (all / select numbers / skip)"
-
-   If approved: Create tasks using the same pattern as `/log-task` — smart project routing from `asana-config.md`, set Task Progress to "Not Started", Type and Priority based on context. Set due dates based on urgency (commitments from today/yesterday = due today, older = due tomorrow).
-
-2. If Agent Queue tasks exist, prompt:
+1. If Agent Queue tasks exist, prompt:
 
    "You have [N] tasks in Agent Queue. Want me to run /run-tasks as a background agent while you work on your priority items?"
 
    If yes: Launch /run-tasks via the Agent tool with run_in_background=true, then continue the interactive session with the user on their priority actions.
 
-3. Ask: "Which task would you like to start with?"
+2. Ask: "Which task would you like to start with?"
 
-This allows Claude to help work through tasks conversationally — whether that's drafting an email, researching a topic, or executing an Asana task.
+This allows Claude to help work through tasks conversationally -- whether that's drafting an email, researching a topic, or executing an Asana task.
