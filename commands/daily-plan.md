@@ -184,14 +184,22 @@ If the day looks overloaded (total effort exceeds available non-meeting hours), 
 
 If priority is unclear between items, use AskUserQuestion to clarify before finalizing the list.
 
-## Step 6: Interactive Handoff
+## Step 6: Confirm & Load Task List
 
-1. If Agent Queue tasks exist, prompt:
+1. After presenting the Priority Actions table, prompt:
+
+   "Any edits to the priority list? (reorder / add / remove / change effort tags / looks good)"
+
+   Wait for the user's response. If they request changes, update the table and re-present it. Repeat until the user confirms the list is ready (e.g., "looks good", "confirmed", "good to go", etc.).
+
+2. Once confirmed, create a TaskCreate entry for each priority action in the confirmed table. Use the task name and effort tag from the table (e.g., "Draft Champions status email [30m]"). Preserve the ranked order.
+
+3. If Agent Queue tasks exist, prompt:
 
    "You have [N] tasks in Agent Queue. Want me to run /run-tasks as a background agent while you work on your priority items?"
 
    If yes: Launch /run-tasks via the Agent tool with run_in_background=true, then continue the interactive session with the user on their priority actions.
 
-2. Ask: "Which task would you like to start with?"
+4. Ask: "Which task would you like to start with?"
 
 This allows Claude to help work through tasks conversationally -- whether that's drafting an email, researching a topic, or executing an Asana task.
