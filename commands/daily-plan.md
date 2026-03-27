@@ -192,6 +192,8 @@ If priority is unclear between items, use AskUserQuestion to clarify before fina
 
    Wait for the user's response. If they request changes, update the table and re-present it. Repeat until the user confirms the list is ready (e.g., "looks good", "confirmed", "good to go", etc.).
 
+   **Moving tasks to other days:** If the user moves a task to a different day (e.g., "push #5 to Monday", "do #3 tomorrow"), remove it from today's table entirely -- do not keep it with an updated date. Update the Asana due date if the task came from Asana, then re-present the shortened table.
+
 2. Once confirmed, create a TaskCreate entry for each priority action in the confirmed table. Use the task name and effort tag from the table (e.g., "Draft Champions status email [30m]"). Preserve the ranked order.
 
 3. If Agent Queue tasks exist, prompt:
