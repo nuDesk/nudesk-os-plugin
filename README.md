@@ -1,6 +1,6 @@
 # nuDesk OS — Claude Code Plugin
 
-> **Version 3.1.0**
+> **Version 3.1.1**
 
 An executive operating system for Claude Code. Turns Claude into a daily operator that plans your day, executes tasks, generates weekly reports, runs security audits, and manages institutional memory — all powered by your existing tools.
 
