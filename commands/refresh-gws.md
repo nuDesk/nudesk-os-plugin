@@ -62,9 +62,16 @@ Check that auth credentials are still valid after the update:
 gws auth status
 ```
 
-If auth fails, inform the user:
-- If on macOS: v0.22.3+ enhanced keychain security and may have removed old `.encryption_key` fallback files
-- Run `gws auth setup` to re-authenticate (this is the correct command, NOT `gws auth login`)
+If auth fails (encryption_valid: false, or token_valid: false), inform the user and suggest:
+
+```bash
+gws auth login --services gmail,calendar,drive,sheets,docs,slides,chat,people
+```
+
+Notes:
+- Use `--services` to limit OAuth scopes to services actually in use. Requesting all scopes causes `invalid_scope` errors if the OAuth consent screen doesn't have them approved.
+- If the OAuth client itself needs reconfiguring, use `gws auth setup` instead (NOT `gws auth login`)
+- On macOS: v0.22.3+ uses native Keychain. Old `.encryption_key` fallback files from earlier versions are auto-removed.
 
 ## Step 5: Summary
 
