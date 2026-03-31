@@ -66,6 +66,16 @@ unzip -o ai-solution-architect.skill -d ~/.claude/skills/
 unzip -o nudesk-brand-styling.skill -d ~/.claude/skills/
 ```
 
+### Orphaned User-Space Skills
+Check if any plugin-local skills have stale duplicates at `~/.claude/skills/` that could shadow the plugin version:
+
+```bash
+ls ~/.claude/skills/meeting-prep/SKILL.md ~/.claude/skills/asana-agent/SKILL.md ~/.claude/skills/memory-management/SKILL.md ~/.claude/skills/executive-planning/SKILL.md ~/.claude/skills/evidence-collector/SKILL.md ~/.claude/skills/soc2-compliance/SKILL.md ~/.claude/skills/vanta-bridge/SKILL.md 2>/dev/null
+```
+
+If any of these exist, flag as a warning:
+> **Warning:** `<name>` exists at both `~/.claude/skills/<name>/` (user-space) and as a plugin-local skill (`nudesk-os:<name>`). The user-space copy may be outdated and shadow the plugin version. Remove with: `rm -rf ~/.claude/skills/<name>`
+
 ### MCP Servers
 Check `~/.claude.json` and workspace `settings.json` for configured MCP servers:
 - [ ] **Asana** — Required

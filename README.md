@@ -1,6 +1,6 @@
 # nuDesk OS — Claude Code Plugin
 
-> **Version 3.1.2**
+> **Version 3.1.3**
 
 An executive operating system for Claude Code. Turns Claude into a daily operator that plans your day, executes tasks, generates weekly reports, runs security audits, and manages institutional memory — all powered by your existing tools.
 
@@ -39,6 +39,7 @@ An executive operating system for Claude Code. Turns Claude into a daily operato
 | **vanta-bridge** | Background | Syncs Asana compliance data (change log, incidents) to Vanta via REST API |
 | **srd-generator** | On-demand | Generates Solution Requirements Documents for AI agent consumption — "PRD", "requirements document", "build brief", "spec out", "technical requirements" |
 | **ai-solution-architect** | On-demand | Technical strategy partner for AI solution design and build vs. buy decisions — "help me design", "I need to build", "architecture review", "solution design" |
+| **meeting-prep** | Auto-triggered | Autonomous meeting preparation — calendar, Gmail, HubSpot, and Fireflies research with tailored meeting briefs |
 | **nudesk-brand-styling** | Auto-triggered | Applies nuDesk brand colors, typography, and design standards to presentations, reports, and client-facing materials |
 
 ### Agents
@@ -257,6 +258,37 @@ claude plugin add skill-creator@claude-plugins-official
 | `~/Projects/nudesk-os-plugin/` | Plugin source code, docs, and references | commands, skills, agents, templates, references, README |
 | `~/.claude/` | Runtime config (hidden, auto-managed) | CLAUDE.md, memory/, plugins/, settings |
 | `~/Projects/.claude/` | Workspace-scoped overrides | project-specific skills, hooks, agents |
+
+## Skill Distribution Paths
+
+nuDesk OS supports two skill distribution mechanisms. Choosing the right one avoids manual install steps for users.
+
+### Plugin-Local Skills (auto-update)
+
+- **Location:** `skills/<name>/SKILL.md`
+- **Namespace:** Appears as `nudesk-os:<name>` in the skill list
+- **Updates:** Automatically when users refresh the plugin
+- **Use when:** The skill is markdown-only (no binary assets or large reference files)
+
+Current: asana-agent, evidence-collector, executive-planning, meeting-prep, memory-management, soc2-compliance, vanta-bridge
+
+### Bundled Skills (manual extraction)
+
+- **Location:** `skills/bundles/<name>.skill` (ZIP archive containing `<name>/SKILL.md` and supporting files)
+- **Namespace:** Appears without prefix (standalone) in the skill list
+- **Updates:** Requires re-running `os-setup` Step 6 or manual `unzip -o <name>.skill -d ~/.claude/skills/`
+- **Use when:** The skill includes supplementary assets (templates, reference docs, images)
+
+Current: ai-solution-architect, nudesk-brand-styling, srd-generator
+
+### Choosing a Path
+
+| Criterion | Plugin-Local | Bundled |
+|-----------|-------------|---------|
+| Has only SKILL.md | Yes | Overkill |
+| Has reference files or assets | Not supported | Yes |
+| Auto-updates on plugin refresh | Yes | No |
+| Requires os-setup extraction | No | Yes |
 
 ## License
 
