@@ -15,7 +15,7 @@ This skill minimizes round trips. Most preps complete with 0-1 questions.
 - **Multiple meetings** — present list, ask user to pick (only required stop)
 - **User names a person or company** (e.g., "prep for my call with Evan") — match by attendee name or title, skip the list
 - **Discovery questions** — only asked when engagement history is thin (see Step 3)
-- **Brief output** — deliver directly, no approval gate
+- **Brief output** — deliver as markdown first, then create a Google Doc after user sign-off
 
 ## Step 1: Calendar Check
 
@@ -109,85 +109,135 @@ Use `WebSearch` for: company background, recent news, funding, key metrics, indu
 ### Participant Bios (new contacts only)
 Use `WebSearch` for: attendee backgrounds, roles, career history. Skip for people already in Kenny's working memory (see CLAUDE.md People table).
 
-## Step 5: Generate Meeting Prep Brief
+## Step 5: Generate Meeting Prep Brief (Markdown Draft)
 
-Adapt format based on relationship type. Deliver directly — no approval gate.
+Generate the brief as markdown and present it to the user. This is the review draft before creating the Google Doc.
+
+Adapt format based on relationship type:
 
 ### For Prospects
 
 ```
 ## Meeting Prep Brief: [Company Name]
 
-**Date:** [From calendar]
+**Date:** [Day of week], [Month] [Day], [Year] | [Start time] - [End time] [TZ]
+**Type:** [Meeting type — e.g., First consultation call (new prospect)]
 **Meeting Objective:** [From discovery or inferred from context]
 
+## Research & Engagement History
+
 ### Engagement History
-[Summary of prior interactions from email, HubSpot, Fireflies — or note if new relationship]
+- [Summary of prior interactions from email, HubSpot, Fireflies — or note if new relationship]
 
 ### Company Overview
-[Brief company background, recent news, relevant metrics]
+[Company name] -- [One-line description, location, identifiers]
+[Niche/focus areas]
+[Scale/metrics]
+[Differentiator]
 
 ### Participant Bios
-- **[Name], [Title]** — [Key background points]
+[Name], [Title] -- [Key background, achievements, relevant context]
+
+## Meeting Preparation
 
 ### Recommended Agenda
-1. Opening / rapport (5 min)
-2. [Agenda item based on context]
-3. [Agenda item based on context]
-4. Next steps (5 min)
+[Topic] ([time]) -- [Description]
 
 ### Key Talking Points
-- [Point aligned to nuDesk relevance and prior context]
+[Topic] -- [Explanation of why this matters and how to position it]
+
+### What We've Built (Capabilities to Highlight)
+[Capability name] -- [Description of what it does and why it's relevant]
 
 ### Discovery Questions
-- [Question based on meeting goal and engagement history]
+[Question]
 
-### Expected Questions & nuDesk Responses
-
-| Expected Question | Suggested Response |
-|-------------------|-------------------|
-| Can nuDesk work with our existing LOS or core? | Yes, we specialize in integrating into legacy and modern ecosystems. |
-| How is your platform different from internal automation or RPA tools? | nuDesk focuses on intelligence and orchestration across business rules, not just task-level automation. |
-| What's the typical time to value? | Many clients see measurable outcomes within 30-60 days of deployment. |
-| Is it configurable to our specific credit products or channels? | Yes, we support tailored rules, routes, and validations. |
-| How do you handle data security and compliance? | SOC 2-compliant, with full audit logging and encryption in motion and at rest. |
+### Expected Questions and nuDesk Responses
+Q: [Expected question]
+A: [Suggested response]
 ```
 
 ### For Clients
 
-```
-## Meeting Prep Brief: [Client Name]
-
-**Date:** [From calendar]
-**Meeting Objective:** [From discovery or inferred from context]
-
-### Engagement History
-[Current engagement status, recent deliverables, relationship context from email/HubSpot/Fireflies]
-
-### Participant Bios
-- **[Name], [Title]** — [Key background points]
-
-### Recommended Agenda
-1. Check-in / rapport (5 min)
-2. [Agenda item based on context]
-3. Next steps (5 min)
-
-### Key Talking Points
-- [Point aligned to client priorities and recent engagement]
-
-### Questions for Client
-- [Question based on meeting goal]
-
-### Expected Questions & nuDesk Responses
-
-| Expected Question | Suggested Response |
-|-------------------|-------------------|
-| [Context-specific question from history] | [Tailored response] |
-```
+Same structure but replace "Research & Engagement History" focus with current engagement status, recent deliverables, and open items. Replace "Discovery Questions" with "Questions for Client." Skip "What We've Built" unless demoing new capabilities.
 
 ### For Network/Other
 
-Simplify to: Meeting Objective, Engagement History, Participant Bios, Talking Points, Questions to Ask.
+Simplify to: Date, Type, Meeting Objective, Engagement History, Participant Bios, Talking Points, Questions to Ask.
+
+After presenting the markdown brief, ask the user: **"Ready to create the Google Doc?"**
+
+Do not proceed to Step 6 until the user signs off. They may request changes to the brief content first.
+
+## Step 6: Create Google Doc
+
+After user sign-off, create a formatted Google Doc in the Meeting Notes shared drive folder.
+
+### 6a. Create the document
+
+```bash
+gws docs documents create --json '{"title":"Meeting Prep Brief: [Company Name]"}' --format json
+```
+
+Extract the `documentId` from the response.
+
+### 6b. Move to Meeting Notes folder
+
+The doc must be moved to the **Meeting Notes (nuDesk)** shared drive folder:
+- **Folder ID:** `1dIPBQ--7uI9YEKn8DAq7ityBdcOa21cM`
+- **Drive ID:** `0APOefP_6ePhHUk9PVA`
+
+```bash
+gws drive files update --params '{"fileId":"[DOC_ID]","addParents":"1dIPBQ--7uI9YEKn8DAq7ityBdcOa21cM","removeParents":"[CURRENT_PARENT_ID]","supportsAllDrives":true}' --format json
+```
+
+To get the current parent, read the file metadata first:
+```bash
+gws drive files get --params '{"fileId":"[DOC_ID]","fields":"id,parents","supportsAllDrives":true}' --format json
+```
+
+### 6c. Format the document with batchUpdate
+
+Use `gws docs documents batchUpdate` to insert and format all content. The document must match this style structure (based on the established template):
+
+**Document formatting rules:**
+
+| Content | Google Docs Style |
+|---------|-------------------|
+| Title (e.g., "Meeting Prep Brief: Convoy Home Loans") | `TITLE` (set by `namedStyleType`) |
+| Metadata lines (Date, Type, Meeting Objective) | `NORMAL_TEXT` with bold label + normal value |
+| Major sections (Research & Engagement History, Meeting Preparation) | `HEADING_2` |
+| Subsections (Engagement History, Company Overview, Participant Bios, etc.) | `HEADING_3` |
+| Bullet points | `NORMAL_TEXT` starting with `- ` |
+| Agenda items | `NORMAL_TEXT` — "[Topic] ([time]) -- [Description]" |
+| Q&A pairs | `NORMAL_TEXT` — separate `Q:` and `A:` lines |
+
+**Important formatting notes:**
+- Do NOT use markdown tables in the Google Doc. Convert "Expected Questions" to Q:/A: line pairs.
+- Bold labels in metadata lines (e.g., **Date:**, **Type:**, **Meeting Objective:**) use `updateTextStyle` with `bold: true`.
+- Insert blank lines between sections for readability.
+- The title is set via `insertText` at index 1 + `updateParagraphStyle` with `namedStyleType: TITLE`.
+
+**batchUpdate request structure:**
+
+Build the requests array by inserting text bottom-up (insert from end to start so character indices don't shift). Alternatively, insert sequentially and track the running index.
+
+```bash
+gws docs documents batchUpdate --params '{"documentId":"[DOC_ID]"}' --json '{"requests":[...]}' --format json
+```
+
+Each request in the array is one of:
+- `insertText` — `{"insertText":{"location":{"index":N},"text":"content\n"}}`
+- `updateParagraphStyle` — `{"updateParagraphStyle":{"range":{"startIndex":N,"endIndex":M},"paragraphStyle":{"namedStyleType":"HEADING_2"},"fields":"namedStyleType"}}`
+- `updateTextStyle` — `{"updateTextStyle":{"range":{"startIndex":N,"endIndex":M},"textStyle":{"bold":true},"fields":"bold"}}`
+
+### 6d. Share the link
+
+After creating the doc, share the Google Doc link with the user:
+
+```
+Doc created: https://docs.google.com/document/d/[DOC_ID]/edit
+```
 
 ## Tool Reference
 
@@ -202,6 +252,9 @@ Simplify to: Meeting Objective, Engagement History, Participant Bios, Talking Po
 | Fireflies MCP `fireflies_get_summary` | Step 2C | AI meeting summaries |
 | `gws people people searchDirectoryPeople` | Step 4 | Internal vs external contact check |
 | `WebSearch` | Step 4 | Company and participant research |
+| `gws docs documents create` | Step 6a | Create blank Google Doc |
+| `gws drive files update` | Step 6b | Move doc to shared drive folder |
+| `gws docs documents batchUpdate` | Step 6c | Insert and format doc content |
 
 ## Gmail Base Filter
 
