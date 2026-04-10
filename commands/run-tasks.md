@@ -1,6 +1,6 @@
 ---
 description: Execute Asana agent queue tasks autonomously via Ralph Loop
-allowed-tools: Read, Write, Edit, Bash, Grep, Glob
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob, mcp__plugin_asana_asana__asana_search_tasks, mcp__plugin_asana_asana__asana_get_task, mcp__plugin_asana_asana__asana_update_task, mcp__plugin_asana_asana__asana_create_task, mcp__plugin_asana_asana__asana_create_task_story, mcp__plugin_asana_asana__asana_get_stories_for_task, mcp__plugin_asana_asana__asana_get_attachments_for_object, mcp__plugin_asana_asana__asana_get_attachment
 ---
 
 Execute the Asana agent queue autonomously. This command starts a Ralph Loop that drives the `asana-agent` skill through the full task queue until all tasks are completed.
@@ -22,7 +22,7 @@ Execute the Asana agent queue autonomously. This command starts a Ralph Loop tha
 
 > **Platform constraint check:** Before writing or modifying code for a managed platform
 > (n8n, Cloud Run, Google APIs, HubSpot, Apollo), check the relevant reference doc at
-> `~/Projects/nudesk-os-plugin/references/platform-references/`. See CLAUDE.md for the full table.
+> `~/Documents/claude-code/nudesk-internal/nudesk-os-plugin/references/platform-references/`. See CLAUDE.md for the full table.
 
 3. **After the loop completes**, run session closeout:
    - Summarize all tasks completed and drafts awaiting review
