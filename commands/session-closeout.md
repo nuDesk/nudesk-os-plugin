@@ -1,6 +1,6 @@
 ---
-description: End-of-session wrap-up — capture tasks, update memory, note learnings
-allowed-tools: Read, Write, Edit, Grep, Glob, mcp__plugin_asana_asana__asana_search_tasks, mcp__plugin_asana_asana__asana_create_task, mcp__plugin_asana_asana__asana_update_task, mcp__plugin_asana_asana__asana_create_task_story
+description: End-of-session wrap-up — commit check, capture tasks, update memory, note learnings
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob, mcp__plugin_asana_asana__asana_search_tasks, mcp__plugin_asana_asana__asana_create_task, mcp__plugin_asana_asana__asana_update_task, mcp__plugin_asana_asana__asana_create_task_story
 ---
 
 Run end-of-session closeout. This captures open items as Asana tasks, updates memory with new context, and logs Claude Code learnings.
@@ -34,6 +34,52 @@ Review the current conversation to identify:
 - Environment/configuration quirks
 - Warnings or gotchas encountered
 - Useful patterns worth remembering
+
+## Step 1.5: Git Status Check
+
+Before closing out, verify all session work is committed and pushed via the PR workflow.
+
+1. **Run `git status`** to check for uncommitted or untracked changes
+2. **Run `git log origin/main..HEAD`** to check for unpushed commits
+3. **Check current branch** — if on a feature branch, check if it has an open PR
+
+### If uncommitted changes exist:
+
+Present them to the user:
+```
+UNCOMMITTED CHANGES:
+  Modified:   [file list]
+  Untracked:  [file list]
+
+Recommend: Commit via PR workflow? [yes / skip]
+```
+
+If the user approves:
+1. Create a feature branch: `git checkout -b chore/session-cleanup-YYYY-MM-DD`
+2. Stage relevant files (exclude `.DS_Store`, `node_modules/`, `.env`, and other non-repo artifacts)
+3. Commit with a descriptive message
+4. Push and create PR: `gh pr create --title "..." --body "..."`
+5. Squash-merge: `gh pr merge --squash --delete-branch`
+6. Confirm merge succeeded
+
+### If on a feature branch with unpushed commits:
+
+```
+UNPUSHED WORK:
+  Branch: [branch name]
+  Commits: [N] commits ahead of origin/main
+  PR: [exists / does not exist]
+
+Recommend: Push and create PR? [yes / skip]
+```
+
+### If everything is clean:
+
+Report "Git: all changes committed and pushed" and continue.
+
+**SOC 2 context:** This step ensures no session work bypasses the PR audit trail (SD-02).
+
+---
 
 ## Step 2: Search Asana, Then Suggest
 
