@@ -1,23 +1,24 @@
 ---
 name: asana-agent
 description: >
-  Execute daily Asana tasks assigned to the user. Use when asked to "run my tasks",
+  Autonomous Asana task executor. Use when asked to "run my tasks",
   "check my Asana queue", "process today's tasks", "work through my agent queue", or
-  any request to execute tasks from Asana. Retrieves tasks where due date = today AND
-  Task Progress = "Agent Queue", processes each sequentially by matching to relevant
-  skills, completes deliverables, and closes out tasks with summary comments.
-version: 1.0.0
+  any request to execute tasks from Asana. Retrieves tasks where
+  Task Progress = "Agent Queue", processes each autonomously by matching to relevant
+  skills, completes deliverables, marks tasks done, and moves to the next.
+version: 2.0.0
 ---
 
-# Asana Agent — Daily Task Executor
+# Asana Agent — Autonomous Task Executor
 
-Automated workflow for processing Asana tasks assigned to the user. This agent retrieves queued tasks, processes them with relevant skills, and closes them out.
+Autonomous workflow for processing Asana tasks. This agent retrieves queued tasks, works through them independently, and marks them complete. It only pauses to ask the user when genuinely blocked.
 
 ## Core Principles
 
-1. **Understand before acting** — Never rush into execution. Tasks in the queue may be incomplete or require interpretation.
-2. **Collaborate with the user** — This is an assisted workflow, not a fully autonomous one. The user remains in the loop.
-3. **Use available skills** — Match tasks to the right skill for best results.
+1. **Understand before acting** — Gather full context from the task, comments, and attachments before executing.
+2. **Operate autonomously** — This is a self-driving workflow. Proceed through tasks without waiting for approval unless you are genuinely blocked and cannot make a reasonable judgment call.
+3. **Draft, never send** — All external communications (emails, Slack messages, Google Chat messages) must be prepared as **drafts only**. Never send on behalf of the user unless explicitly instructed otherwise for a specific task.
+4. **Use available skills** — Match tasks to the right skill for best results.
 
 ---
 
@@ -29,16 +30,20 @@ Load Asana GIDs from `~/.claude/memory/asana-config.md` for workspace, user, pro
 
 Search Asana for tasks matching ALL criteria:
 - Assigned to: me
-- Due date: today
 - Custom field "Task Progress" = "Agent Queue"
 
-Use `asana_search_tasks` with the workspace GID from config. If no tasks found, inform user and stop.
+Use `asana_search_tasks` with the workspace GID from config. Pass these parameters:
+- `workspace`: workspace GID from config
+- `assignee_any`: `"me"`
+- `custom_fields`: Task Progress field GID set to Agent Queue option GID (both from config)
 
-Present the task queue to the user with a brief summary of each task before proceeding.
+If no tasks found, report the empty queue and stop.
+
+Present the task queue with a brief summary of each task, then begin processing.
 
 ---
 
-### 2. Process Each Task Sequentially
+### 2. Process Each Task
 
 For each task:
 
@@ -57,20 +62,22 @@ Before doing anything else, gather ALL available context:
 
 #### b) Handle Attachments
 
-- If attachments exist, prompt user to provide files if they are not accessible
-- Review attachment contents as part of understanding the task scope
-- Wait for user confirmation before continuing
+- If attachments exist, attempt to access and review their contents
+- If attachments are not accessible, note this in the task closeout comment and proceed with available information
 
-#### c) Mandatory Clarification Phase
+#### c) Clarification (only if blocked)
 
-**Before beginning any execution work, ask 2-3 clarifying questions** to ensure full understanding of:
+**Only ask the user questions if missing information would prevent you from completing the task.** If the task is clear enough to make a reasonable attempt, proceed without asking.
 
-- The desired outcome and success criteria
-- Any preferences for approach, format, or style
-- Dependencies or constraints not explicitly stated
-- Who the audience or stakeholder is (if relevant)
+Ask when:
+- The task is ambiguous in a way that could lead to wasted effort (e.g., two very different possible interpretations)
+- Critical information is missing and cannot be inferred from context
+- The task requires a decision only the user can make (e.g., which vendor to choose)
 
-Even if the task seems straightforward, this step catches assumptions. Proceed only after user confirms.
+Do NOT ask when:
+- You can infer the answer from task context, comments, or memory
+- The question is about preferences you can make a reasonable default choice on
+- You're asking "just to be safe" — bias toward action
 
 ---
 
@@ -87,13 +94,18 @@ If a relevant skill is identified:
 - Follow the skill's prescribed process
 
 If no specific skill matches:
-- Complete the task using general capabilities based on task description and clarified requirements
+- Complete the task using general capabilities based on task description and context
 
 ---
 
 ### 4. Execute Task
 
 Complete the deliverable based on the task requirements and chosen approach. Save any output files as appropriate for the project context.
+
+**External communications rule:** If the task involves sending emails, Slack messages, Google Chat messages, or any outbound communication:
+- Prepare the content as a **draft** (e.g., Gmail draft via `gws gmail +draft`)
+- Do NOT send unless the task explicitly says "send" and the user has pre-authorized sending for this task
+- Note all drafts created in the task closeout comment so the user knows to review and send them
 
 ---
 
@@ -105,32 +117,30 @@ After completing each task:
 Use `asana_create_task_story` to add a plain-text summary:
 - What was completed
 - Files/deliverables created (with names)
+- Drafts prepared (if any) — specify where to find them (e.g., "Gmail draft: [subject]")
 - Any notes, caveats, or recommended follow-ups
 
-#### b) Update Status
-Use `asana_update_task` to set custom field "Task Progress" to "Pending Review"
+#### b) Mark Complete
+Use `asana_update_task` to:
+- Set `completed: true`
+- Update custom field "Task Progress" to "Done"
 
-#### c) Obtain User Sign-Off
+#### c) Handle Failures
+If a task fails during execution (tool error, missing access, unresolvable ambiguity):
+- Add a comment to the task explaining what failed and why
+- Leave the task status as "Agent Queue" (do NOT mark complete)
+- Surface the failure in the session wrap-up
+- Move to the next task
 
-**Before moving to the next task, explicitly confirm with the user:**
-- Present a summary of what was completed
-- Ask if the deliverable meets expectations
-- Ask if any revisions are needed before proceeding
-
-**Do not proceed to the next task until the user explicitly approves the current task.**
-
----
-
-### 6. Repeat Until Queue Complete
-
-Continue to next task only after sign-off. Repeat the full workflow for each task.
+#### d) Move to Next Task
+Proceed to the next task in the queue immediately. No user sign-off required.
 
 ---
 
-### 7. Session Wrap-Up
+### 6. Session Wrap-Up
 
 After all tasks are processed:
 
-1. **Final Summary** — Consolidated summary of all tasks completed and any outstanding follow-ups
-2. **Suggest follow-up tasks** — If execution surfaced new action items, suggest creating them in Asana
-3. **Update memory** — If new context emerged (contacts, terms, project updates), suggest memory updates
+1. **Final Summary** — Consolidated summary of all tasks completed, any that failed, and outstanding follow-ups
+2. **Communications Audit** — Enumerate every external communication touched during the session and its disposition (draft created, skipped, or flagged). This confirms the draft-only guardrail was respected.
+3. **Follow-up tasks** — If execution surfaced new action items, create them in Asana or suggest them to the user
