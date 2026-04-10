@@ -1,20 +1,20 @@
 # Vanta API — Platform Reference
 
-**Last updated:** 2026-03-23
+**Last updated:** 2026-04-10
 **Status:** API access verified (2026-03-23) — "Manage Vanta" app type, OAuth client credentials flow working
 
 ---
 
-## Tier Availability
+## Tier & Plan
 
-| Feature | Basic | Core | Enterprise |
-|---------|-------|------|------------|
+**nuDesk is on the Core+ plan.** Full REST API access and MCP server eligibility confirmed.
+
+| Feature | Basic | Core | Core+ / Enterprise |
+|---------|-------|------|--------------------|
 | Web UI (controls, tests, evidence, reviews) | Yes | Yes | Yes |
-| REST API (`https://api.vanta.com`) | Verify | Yes | Yes |
-| MCP Server (public preview, read-only) | No | Yes | Yes |
-| Custom integrations (webhooks, SCIM) | No | No | Yes |
-
-> **nuDesk is on the Basic plan.** Check Developer Console to verify API access — some Basic plans have API enabled.
+| REST API (`https://api.vanta.com`) | No | Yes | Yes |
+| MCP Server (public preview, read-only) | No | No | Yes |
+| Custom integrations (webhooks, SCIM) | No | No | Enterprise only |
 
 ---
 
@@ -26,7 +26,7 @@
 - Scopes: `vanta-api.all:read`, `vanta-api.all:write` (request both, server grants what your app is authorized for)
 - **Single active token per application** — issuing a new token immediately revokes the previous one (in-flight requests with old token will get 401)
 - Token expiry: **1 hour** — tokens cannot be refreshed; request a new one when expired
-- Store client secret in `~/.env` as `VANTA_CLIENT_SECRET`
+- Store credentials in `~/.env` as `VANTA_CLIENT_ID` and `VANTA_CLIENT_SECRET`
 
 ### Token Request
 
@@ -47,14 +47,15 @@ curl -X POST https://api.vanta.com/oauth/token \
 
 | Endpoint Type | Limit |
 |---------------|-------|
+| OAuth / Auth endpoints | 5 requests / minute |
+| Integration API | 20 requests / minute |
 | Management API | 50 requests / minute |
-| Auth endpoints | 5 requests / minute |
 
 Rate limit headers: `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`
 
 ---
 
-## REST API Capabilities
+## REST API — Verified Endpoints
 
 Base URL: `https://api.vanta.com/v1`
 
@@ -64,53 +65,79 @@ Base URL: `https://api.vanta.com/v1`
 |----------|-------------|----------|
 | `GET /controls` | List all controls with pass/fail status | `/compliance-status` dashboard |
 | `GET /controls/{id}` | Single control detail | Deep-dive on specific control |
-| `GET /tests` | Automated test results | Evidence freshness checks |
+| `GET /tests` | Automated test results with pass/fail | Identify failing tests |
+| `GET /tests/{testId}/entities` | Individual entities within a test | Find which resources are failing |
 | `GET /vulnerabilities` | Open vulnerabilities | `/compliance-status` vuln section |
-| `GET /evidence` | Evidence documents inventory | Gap analysis |
+| `GET /documents` | Evidence documents inventory | Gap analysis, staleness check |
 | `GET /people` | Personnel with compliance status | Access review completion |
 | `GET /frameworks` | Framework mapping (SOC 2, etc.) | Report generation |
+| `GET /vendors` | Vendor inventory | Third-party risk management |
 
-### Write Operations
+### Write Operations (Verified)
 
-| Endpoint | Description | Use Case |
-|----------|-------------|----------|
-| `POST /evidence` | Upload evidence document | `/evidence-collect` → Vanta |
-| `POST /tasks` | Create security task | Asana → Vanta sync |
-| `PUT /tasks/{id}` | Update task status | Bridge sync updates |
-| `POST /controls/{id}/evidence` | Link evidence to control | Evidence mapping |
+| Endpoint | Method | Description | Use Case |
+|----------|--------|-------------|----------|
+| `POST /tests/{testId}/entities/{entityId}/deactivate` | POST | Suppress a test entity (mark as not applicable) | Decommissioned resources still tracked by Vanta |
+| `PATCH /vendors/{vendorId}` | PATCH | Update vendor risk metadata | Set risk level, auth method, data access details |
+| `POST /documents/{documentId}/uploads` | POST | Create upload URL for evidence | Step 2 of 3-step evidence upload |
+| `POST /documents/{documentId}/submit` | POST | Submit uploaded evidence for review | Step 3 of 3-step evidence upload |
 
-### Task Sync (Asana → Vanta)
+### What the API CANNOT Do
 
-The `security_task` resource supports pushing Asana Change Log entries to Vanta:
-
-```json
-{
-  "taskId": "asana-task-gid",
-  "title": "Deploy Portal v2.3.1",
-  "state": "COMPLETED",
-  "priority": "MEDIUM",
-  "assignees": ["sean@nudesk.ai"],
-  "externalUrl": "https://app.asana.com/0/project-gid/task-gid"
-}
-```
-
-### Evidence Upload Workflow
-
-1. `GET /evidence` — list existing evidence docs
-2. `POST /evidence` — upload new document (multipart/form-data)
-3. `POST /controls/{id}/evidence` — link document to specific control
-4. Evidence appears in Vanta UI for auditor review
+- **Mark tests as passing.** Vanta runs its own automated scans against live infrastructure. You cannot override a test result — you must fix the underlying infrastructure issue and wait for Vanta to re-scan.
+- **Create new tests or controls.** These are defined by Vanta's framework mappings.
+- **Delete evidence.** Documents can be uploaded and submitted but not removed via API.
 
 ---
 
-## MCP Server (Core+ Plans Only)
+## Evidence Upload Workflow (3-Step)
+
+Evidence upload is a 3-step process — not a single POST:
+
+1. **`GET /documents`** — List existing evidence documents to find the target document ID
+2. **`POST /documents/{documentId}/uploads`** — Request a pre-signed upload URL. Returns `{ uploadUrl, fields }` for the actual file upload
+3. **`POST /documents/{documentId}/submit`** — After uploading the file to the pre-signed URL, submit the document for auditor review
+
+**Evidence naming convention:** `{date}_{control-id}_{description}.{ext}` (e.g., `2026-04-10_OS-01_change-log-audit.pdf`)
+
+---
+
+## Vendor Risk Management
+
+`PATCH /vendors/{vendorId}` supports these fields:
+
+| Field | Type | Example |
+|-------|------|---------|
+| `inherentRiskLevel` | enum | `LOW`, `MEDIUM`, `HIGH`, `CRITICAL` |
+| `authDetails.method` | enum | `SSO`, `MFA`, `PASSWORD`, `API_KEY` |
+| `dataAccess.hasCustomerData` | boolean | `true` |
+| `dataAccess.dataTypes` | array | `["PII", "FINANCIAL"]` |
+| `owner` | string | Email of vendor owner |
+
+---
+
+## Test Entity Management
+
+When a test fails because it tracks a decommissioned or irrelevant resource:
+
+```
+POST /v1/tests/{testId}/entities/{entityId}/deactivate
+```
+
+This suppresses the entity so it no longer contributes to test failures. Use for resources that have been legitimately decommissioned (e.g., shut-down CloudSQL instances, deleted VMs).
+
+**Important:** Deactivating an entity does NOT fix the test — it removes one failing item. If all entities in a test are deactivated or passing, the test passes.
+
+---
+
+## MCP Server (Core+ Plans)
 
 - **Package:** Official Vanta MCP server (public preview)
 - **Capabilities:** Read-only — frameworks, controls, tests, vulnerabilities, evidence, people
 - **Install:** `claude mcp add vanta -- npx -y @anthropic/vanta-mcp-server`
 - **Auth:** Same OAuth 2.0 client credentials
 
-### Available MCP Tools (Core+)
+### Available MCP Tools
 
 | Tool | Description |
 |------|-------------|
@@ -139,18 +166,9 @@ The Executive OS works at all Vanta tiers:
 
 1. **Single active token.** Never run concurrent API sessions — one token revokes the previous
 2. **Read-heavy, write-light.** Batch evidence uploads; don't call write endpoints in tight loops
-3. **Rate limit awareness.** 50 req/min is generous for batch operations but tight for real-time dashboards — cache responses
-4. **MCP is read-only.** Any write operations (evidence upload, task sync) must go through REST API
-5. **Evidence naming convention.** Use `{date}_{control-id}_{description}.{ext}` for uploaded evidence (e.g., `2026-03-23_OS-01_change-log-audit.pdf`)
-6. **OAuth scope changes require new app.** If you need different scopes, create a new application in Developer Console
-
----
-
-## Verification Checklist (Phase 1.1)
-
-- [ ] Navigate to Vanta Settings → Developer Console
-- [ ] Can you create an Application? → Records API access status
-- [ ] If yes: create OAuth app, record client ID, store secret in `~/.env`
-- [ ] Smoke test: request token, call `GET /controls`
-- [ ] Record plan tier and API access in `compliance-config.md`
-- [ ] If no Developer Console: record "UI-only" in config, proceed with export mode
+3. **Rate limit awareness.** 20 req/min for integration endpoints is the practical limit for automation — cache responses aggressively
+4. **MCP is read-only.** Any write operations (evidence upload, vendor updates, entity deactivation) must go through REST API
+5. **Tests cannot be force-passed.** Fix the infrastructure; Vanta re-scans automatically
+6. **Evidence naming convention.** Use `{date}_{control-id}_{description}.{ext}` for uploaded evidence
+7. **OAuth scope changes require new app.** If you need different scopes, create a new application in Developer Console
+8. **Evidence upload is 3-step.** GET document → POST upload URL → POST submit. Skipping step 3 leaves evidence in draft state.
