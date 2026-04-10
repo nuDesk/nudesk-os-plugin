@@ -82,3 +82,4 @@ Static lists are manually curated or imported. Use for:
 - Log every API call for auditability
 - Dedup contacts upstream — HubSpot only deduplicates on email
 - Keep list count under plan limits (25 active for Starter)
+- **Type mismatch:** v4 associations batch read returns `toObjectId` as integer; list memberships return `recordId` as string. Always `str()` IDs before comparing across endpoints.

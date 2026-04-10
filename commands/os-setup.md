@@ -457,6 +457,41 @@ Call `AskUserQuestion`: "Here's your compliance config. Want me to write it to `
 
 ---
 
+## Step 5c: Agent Teams Configuration
+
+**Detection checks (run in parallel):**
+1. Read `~/.claude/settings.json` — check for `"enableAgentTeams": true`
+2. Run `claude --version` via Bash — parse version number, check >= 2.1.32
+3. Count agent definitions: `ls ~/.claude/agents/*.md ~/Projects/nudesk-os-plugin/agents/*.md 2>/dev/null | wc -l`
+
+### Present Dashboard
+
+```
+Agent Teams Configuration
+
+  Feature flag (enableAgentTeams)  — [Enabled / Not enabled]
+  Claude Code version              — [version] [✓ meets 2.1.32+ / ✗ update needed]
+  Agent definitions available      — [N] (user: [X], plugin: [Y])
+```
+
+### If feature flag is missing:
+
+Call `AskUserQuestion`: "Agent Teams is not enabled. This feature allows coordinating multiple Claude Code sessions working in parallel — useful for multi-module features, parallel audits, and PR workflows. Want me to add `enableAgentTeams: true` to your settings?"
+
+**→ Call `AskUserQuestion`. Your turn ends here.**
+
+On confirmation: Read `~/.claude/settings.json`, merge `"enableAgentTeams": true` into the existing settings, and write back.
+
+### If feature flag is enabled:
+
+Show the dashboard and note:
+
+> Agent Teams also supports three hook events (`TeammateIdle`, `TaskCreated`, `TaskCompleted`) for quality gates. These are optional — add them after you've used teams enough to know what gates matter. See `~/Projects/nudesk-os-plugin/references/platform-references/claude-agent-teams.md` for details.
+
+Proceed to Step 6. No `AskUserQuestion` needed if everything checks out.
+
+---
+
 ## Step 6: Recommended Plugins and Skills
 
 Check which of the following plugins are installed by reading `~/.claude/plugins/installed_plugins.json`. Present status for each, then provide the install block for any that are missing.

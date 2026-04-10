@@ -168,6 +168,35 @@ Flag any platforms referenced in CLAUDE.md "My Stack" section that don't have a 
 - [ ] `~/Projects/nudesk-os-plugin/references/` exists with expected subdirectories
 - [ ] No orphaned config files (e.g., old `.claude/commands/` files that duplicate plugin commands)
 
+## 6. Agent Teams Health
+
+### Feature Flag
+Read `~/.claude/settings.json` — check for `"enableAgentTeams": true`.
+- [ ] Feature flag is enabled
+
+### Claude Code Version
+Run `claude --version` via Bash and parse the version number.
+- [ ] Version >= 2.1.32 (required for Agent Teams)
+
+### Agent Definitions
+Check both locations for agent definition files:
+```bash
+ls ~/.claude/agents/*.md ~/Projects/nudesk-os-plugin/agents/*.md 2>/dev/null
+```
+- [ ] At least one user-level agent exists (`~/.claude/agents/`)
+- [ ] At least one plugin-level agent exists (`~/Projects/nudesk-os-plugin/agents/`)
+
+### Platform Reference Doc
+- [ ] `~/Projects/nudesk-os-plugin/references/platform-references/claude-agent-teams.md` exists
+
+Report the count of available agents and whether the platform reference doc is present.
+
+If the feature flag is missing, provide the fix:
+```json
+"enableAgentTeams": true
+```
+Add to `~/.claude/settings.json` under the top-level object.
+
 ## Output
 
 Present results as a health report:
