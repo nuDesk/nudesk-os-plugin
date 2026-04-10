@@ -34,7 +34,22 @@ Commands live in `commands/<name>.md`. They appear as `/nudesk-os:<name>` and ar
 
 ## Editing Workflow
 
-Always edit files in this working copy, commit and push to GitHub, then run `claude plugin update nudesk-os@marketplace` to sync the install clone. Do NOT edit `~/.claude/plugins/marketplaces/nudesk-os/` directly.
+Always edit files in this working copy. Use the PR workflow below to get changes to main,
+then run `claude plugin update nudesk-os@marketplace` to sync the install clone.
+Do NOT edit `~/.claude/plugins/marketplaces/nudesk-os/` directly.
+
+## Branching & PR Workflow (SOC 2 SD-02)
+
+`main` is protected via org-level GitHub Ruleset. All changes require a pull request.
+
+1. Create a feature branch: `git checkout -b <type>/<short-description>`
+2. Commit with conventional commit messages
+3. Push and create PR: `gh pr create --title "..." --body "..."`
+   - Or ask Claude: "Create a PR for these changes"
+4. Squash-merge: `gh pr merge --squash --delete-branch`
+5. Sync plugin: `claude plugin update nudesk-os@marketplace`
+
+Full guide with examples: `references/branch-protection-guide.md`
 
 ## Version Bumps
 

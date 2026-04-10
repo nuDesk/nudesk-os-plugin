@@ -208,6 +208,10 @@ Apply these checks based on task type:
   - Verify no hardcoded credentials or API keys in output
   - Check for insecure dependencies if new packages were added
   - **Do NOT push to remote or deploy.** Code stays local. The assignee reviews and pushes/deploys after human review.
+  - **Branch protection (all nuDesk repos):** If the task produces code changes,
+    create a feature branch (`agent-queue/YYYY-MM-DD-{task-slug}`) and commit there.
+    After all tasks complete, open a PR per repo via `gh pr create` with a summary.
+    Leave for human review and merge the next morning.
 - **For tasks touching production systems:**
   - Log the activity as a change record (per SOC 2 Change Management controls)
 - **For tasks involving data:**
@@ -294,8 +298,11 @@ On critical error, log to `$LOG_FILE` and print error to console before exiting.
 
 1. **Clean up temp directories:** Remove any `.agent-context/` directories created during execution
 2. **Verify no Agent Teams left running:** Check and clean up any orphaned team processes
-3. **Log completion:** Record end time and summary in `$LOG_FILE`
-4. **Print final summary to console:**
+3. **Create PRs for code changes:** If any tasks produced commits on feature branches,
+   open a PR per repo via `gh pr create`. Include task GIDs and names in the PR body.
+   Format: `gh pr create --title "agent-queue: YYYY-MM-DD batch" --body "Tasks processed: ..."`
+4. **Log completion:** Record end time and summary in `$LOG_FILE`
+5. **Print final summary to console:**
 
 ```
 AGENT QUEUE COMPLETE
