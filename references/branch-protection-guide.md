@@ -89,6 +89,17 @@ claude plugin update nudesk-os@marketplace
 For other repos — no extra step needed. The merge to main IS the deploy trigger
 (or deploy manually as before).
 
+## Easiest Way to Stay Compliant
+
+Run `/session-closeout` at the end of every Claude Code session. It automatically:
+
+1. Checks for uncommitted or unpushed changes
+2. Creates a feature branch and PR if work is outstanding
+3. Self-merges the PR immediately (no approval needed)
+4. Returns you to `main` in a clean state
+
+This is the safety net — even if you forget to create a branch during the session, the closeout catches it and routes everything through a PR before you close the terminal.
+
 ## FAQ
 
 **Q: Can I self-merge my own PR?**
