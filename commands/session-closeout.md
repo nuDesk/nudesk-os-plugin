@@ -59,8 +59,11 @@ If the user approves:
 2. Stage relevant files (exclude `.DS_Store`, `node_modules/`, `.env`, and other non-repo artifacts)
 3. Commit with a descriptive message
 4. Push and create PR: `gh pr create --title "..." --body "..."`
-5. Squash-merge: `gh pr merge --squash --delete-branch`
-6. Confirm merge succeeded
+5. **Self-merge immediately:** `gh pr merge --squash --delete-branch`
+   - 0 approvals required — the PR exists for the audit trail, not as a blocker
+   - Do NOT leave the PR open unless the user explicitly asks to
+6. Return to main: `git checkout main && git pull origin main`
+7. Confirm merge succeeded
 
 ### If on a feature branch with unpushed commits:
 
@@ -70,8 +73,14 @@ UNPUSHED WORK:
   Commits: [N] commits ahead of origin/main
   PR: [exists / does not exist]
 
-Recommend: Push and create PR? [yes / skip]
+Recommend: Push, create PR, and self-merge? [yes / skip]
 ```
+
+If the user approves:
+1. Push: `git push -u origin [branch]`
+2. Create PR: `gh pr create --title "..." --body "..."`
+3. **Self-merge immediately:** `gh pr merge --squash --delete-branch`
+4. Return to main: `git checkout main && git pull origin main`
 
 ### If everything is clean:
 
