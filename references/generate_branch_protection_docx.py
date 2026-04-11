@@ -354,6 +354,21 @@ add_body("For other repos \u2014 no extra step needed. The merge to main IS the 
 
 add_divider()
 
+# --- EASIEST WAY TO STAY COMPLIANT ---
+add_heading_styled("Easiest Way to Stay Compliant", level=1)
+
+add_body("Run /session-closeout at the end of every Claude Code session. It automatically:")
+add_bullet("Checks for uncommitted or unpushed changes")
+add_bullet("Creates a feature branch and PR if work is outstanding")
+add_bullet("Self-merges the PR immediately (no approval needed)")
+add_bullet("Returns you to main in a clean state")
+
+doc.add_paragraph()
+add_callout("This is the safety net \u2014 even if you forget to create a branch during the session, "
+            "the closeout catches it and routes everything through a PR before you close the terminal.")
+
+add_divider()
+
 # --- FAQ ---
 add_heading_styled("FAQ", level=1)
 
