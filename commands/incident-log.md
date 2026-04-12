@@ -67,6 +67,7 @@ Create the incident task in Asana:
    - **Title:** `[P{severity}] {brief description}` (e.g., "[P2] API key exposed in session log")
    - **Severity** custom field: set to confirmed severity
    - **Control ID** custom field: IR-01 (initial report)
+   - **Do NOT set `assignee`** — compliance log entries are system records, not personal tasks. Setting an assignee clutters My Tasks.
    - **Description (html_notes):**
      ```
      INCIDENT REPORT

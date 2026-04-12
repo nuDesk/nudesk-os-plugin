@@ -61,6 +61,8 @@ For each grouped evidence set:
    - Change Type: infer from evidence type (commit → Feature/Bugfix, deploy → Infrastructure, etc.)
    - Control ID: mapped control IDs
    - Description: aggregated evidence details
+   - completed: `true` (these are log entries for changes that already happened, not action items)
+   - Do NOT set `assignee` — Change Log entries are compliance records, not personal tasks
    - Subtasks: change management checklist from compliance config template
 5. Attach evidence summary as a comment
 
