@@ -113,6 +113,8 @@ For each approved action:
    - **Change Type** custom field: appropriate enum value
    - **Control ID** custom field: relevant control ID(s)
    - **Description (html_notes):** What changed and why, with evidence details
+   - **completed:** `true` (these are log entries for changes that already happened, not action items)
+   - **Do NOT set `assignee`** — Change Log entries are compliance records, not personal tasks. Setting an assignee clutters My Tasks.
    - **Subtasks:** Add the change management checklist from the compliance config template
 
 2. Add evidence as a comment via `asana_create_task_story`:
